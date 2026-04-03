@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { bannersAPI } from '../services/api';
 import { 
   Crown, Shield, Gift, Target, Gamepad2, Trophy, 
