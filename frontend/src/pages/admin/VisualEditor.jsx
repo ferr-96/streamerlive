@@ -93,7 +93,9 @@ function VisualEditor() {
 
   // Auto-save to localStorage
   useEffect(() => {
+    console.log('💾 Auto-saving to localStorage:', pageData);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pageData));
+    console.log('✅ localStorage.setItem called with key:', STORAGE_KEY);
   }, [pageData]);
 
   const loadData = async () => {
@@ -171,26 +173,45 @@ function VisualEditor() {
     setSelectedElement({ id, type, data });
   };
 
-  const handleUpdate = (id, newData) => {
+  const handleUpdate = (id, newData, elementType = null) => {
+    // Use passed elementType or fall back to selectedElement
+    const type = elementType || selectedElement?.type;
+    console.log('🔍 VisualEditor handleUpdate called:', { id, newData, type });
+    
+    if (!type) {
+      console.error('❌ No element type provided to handleUpdate');
+      return;
+    }
+    
     setPageData(prev => {
       const updated = { ...prev };
 
-      if (selectedElement.type === 'header') {
+      if (type === 'header') {
+        console.log('✅ Updating header');
         updated.header = newData;
-      } else if (selectedElement.type === 'hero') {
+      } else if (type === 'hero') {
+        console.log('✅ Updating hero');
         updated.hero = newData;
-      } else if (selectedElement.type === 'vip-banner') {
+      } else if (type === 'vip-banner') {
+        console.log('✅ Updating vip-banner');
         updated.vipBanner = newData;
-      } else if (selectedElement.type === 'download-section') {
+      } else if (type === 'download-section') {
+        console.log('✅ Updating download-section');
         updated.downloadSection = newData;
-      } else if (selectedElement.type.startsWith('category')) {
+      } else if (type.startsWith('category') || type === 'category') {
+        console.log('✅ Updating category:', id);
         updated.categories = prev.categories.map(c => c.id === id ? { ...c, ...newData } : c);
-      } else if (selectedElement.type.startsWith('streamer')) {
+      } else if (type.startsWith('streamer') || type === 'streamer-card') {
+        console.log('✅ Updating streamer:', id);
         updated.streamers = prev.streamers.map(s => s.id === id ? { ...s, ...newData } : s);
-      } else if (selectedElement.type.startsWith('feature')) {
+      } else if (type.startsWith('feature') || type === 'feature') {
+        console.log('✅ Updating feature:', id);
         updated.features = prev.features.map(f => f.id === id ? { ...f, ...newData } : f);
+      } else {
+        console.error('❌ Unknown element type:', type);
       }
 
+      console.log('📦 Updated pageData:', updated);
       return updated;
     });
   };

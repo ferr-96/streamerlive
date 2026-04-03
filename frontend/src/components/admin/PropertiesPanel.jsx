@@ -23,8 +23,12 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
 
   const handleChange = (field, value) => {
     const newData = { ...formData, [field]: value };
+    console.log('🔍 PropertiesPanel handleChange called:', { field, value, id: selectedElement.id, type: selectedElement.type });
+    console.log('🔍 New data being sent:', newData);
     setFormData(newData);
-    onUpdate(selectedElement.id, newData);
+    // Pass element type explicitly to avoid stale closure issues
+    onUpdate(selectedElement.id, newData, selectedElement.type);
+    console.log('✅ onUpdate called with:', selectedElement.id, newData, selectedElement.type);
   };
 
   const handleImageUpload = (field) => (e) => {
@@ -241,14 +245,14 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           {/* Position Controls */}
           <div className="flex gap-2">
             <button
-              onClick={() => onUpdate(selectedElement.id, { ...formData, moveUp: true })}
+              onClick={() => onUpdate(selectedElement.id, { ...formData, moveUp: true }, selectedElement.type)}
               className="flex-1 bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-all"
             >
               <ChevronUp className="w-4 h-4" />
               Move Up
             </button>
             <button
-              onClick={() => onUpdate(selectedElement.id, { ...formData, moveDown: true })}
+              onClick={() => onUpdate(selectedElement.id, { ...formData, moveDown: true }, selectedElement.type)}
               className="flex-1 bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-all"
             >
               <ChevronDown className="w-4 h-4" />
@@ -258,7 +262,7 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
 
           {/* Save Button */}
           <button
-            onClick={() => onUpdate(selectedElement.id, formData)}
+            onClick={() => onUpdate(selectedElement.id, formData, selectedElement.type)}
             className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2 transition-all font-medium"
           >
             <Save className="w-4 h-4" />
