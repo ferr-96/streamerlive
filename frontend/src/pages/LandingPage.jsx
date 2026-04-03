@@ -170,10 +170,18 @@ function LandingPage() {
       {/* Main Content */}
       <div className="pt-20">
         {/* Hero Section */}
-        <section className="relative min-h-[700px] flex items-center overflow-hidden">
+        <section className={`relative flex items-center overflow-hidden ${
+          hero?.size === 'full' ? 'min-h-screen' : 
+          hero?.size === 'medium' ? 'min-h-[500px]' : 
+          'min-h-[300px]'
+        }`}>
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-[#0a0a1a] to-pink-900/10"></div>
           
-          <div className="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center relative z-10">
+          <div className={`max-w-7xl mx-auto px-6 py-20 grid gap-12 items-center relative z-10 ${
+            hero?.layout === 'center' ? 'grid-cols-1 text-center' :
+            hero?.layout === 'right' ? 'md:grid-cols-2' : 
+            'md:grid-cols-2'
+          } ${hero?.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
             {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -187,7 +195,7 @@ function LandingPage() {
               <p className="text-xl text-gray-400">
                 {hero?.subtitle || 'A premium gaming livestream platform'}
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className={`flex flex-wrap gap-4 ${hero?.layout === 'center' ? 'justify-center' : ''}`}>
                 <button className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
                   {hero?.primaryButtonText || 'CTA Streamers'}
                 </button>
@@ -198,26 +206,28 @@ function LandingPage() {
             </motion.div>
 
             {/* Right Content - Cyberpunk Placeholder */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="w-full h-[500px] bg-gradient-to-br from-[#a855f7]/20 via-[#ec4899]/20 to-purple-900/20 rounded-3xl border border-[#a855f7]/30 backdrop-blur-sm flex items-center justify-center relative overflow-hidden">
-                {/* Animated gradient orbs */}
-                <div className="absolute top-10 right-10 w-40 h-40 bg-[#a855f7]/30 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-10 left-10 w-40 h-40 bg-[#ec4899]/30 rounded-full blur-3xl animate-pulse delay-300"></div>
-                <Users className="w-32 h-32 text-[#a855f7]/40" />
-              </div>
-            </motion.div>
+            {hero?.layout !== 'center' && (
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="relative"
+              >
+                <div className="w-full h-[500px] bg-gradient-to-br from-[#a855f7]/20 via-[#ec4899]/20 to-purple-900/20 rounded-3xl border border-[#a855f7]/30 backdrop-blur-sm flex items-center justify-center relative overflow-hidden">
+                  {/* Animated gradient orbs */}
+                  <div className="absolute top-10 right-10 w-40 h-40 bg-[#a855f7]/30 rounded-full blur-3xl animate-pulse"></div>
+                  <div className="absolute bottom-10 left-10 w-40 h-40 bg-[#ec4899]/30 rounded-full blur-3xl animate-pulse delay-300"></div>
+                  <Users className="w-32 h-32 text-[#a855f7]/40" />
+                </div>
+              </motion.div>
+            )}
           </div>
         </section>
 
         {/* Category Icons Row */}
         <section className="py-20 bg-[#0f0f23]">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${pageData.categoriesSection?.columns || '6'} gap-6`}>
               {categories.map((category, index) => {
                 const IconComponent = getIcon(category.icon);
                 return (
@@ -250,18 +260,42 @@ function LandingPage() {
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#fbbf24] via-[#a855f7] to-[#ec4899] p-1">
-              <div className="bg-[#0a0a1a] rounded-[22px] p-12">
+              <div className={`bg-[#0a0a1a] rounded-[22px] ${
+                vipBanner?.size === 'large' ? 'p-12' :
+                vipBanner?.size === 'medium' ? 'p-8' :
+                'p-6'
+              }`}>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="flex items-start space-x-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#fbbf24] to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Crown className="w-12 h-12 text-white" />
+                    <div className={`bg-gradient-to-br from-[#fbbf24] to-orange-500 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      vipBanner?.size === 'large' ? 'w-20 h-20' :
+                      vipBanner?.size === 'medium' ? 'w-16 h-16' :
+                      'w-12 h-12'
+                    }`}>
+                      <Crown className={`text-white ${
+                        vipBanner?.size === 'large' ? 'w-12 h-12' :
+                        vipBanner?.size === 'medium' ? 'w-8 h-8' :
+                        'w-6 h-6'
+                      }`} />
                     </div>
                     <div className="text-left">
-                      <h3 className="text-3xl font-bold mb-3">{vipBanner?.title || 'VIP Rewards Banner'}</h3>
-                      <p className="text-gray-300 text-lg mb-6">
+                      <h3 className={`font-bold mb-3 ${
+                        vipBanner?.size === 'large' ? 'text-3xl' :
+                        vipBanner?.size === 'medium' ? 'text-2xl' :
+                        'text-xl'
+                      }`}>{vipBanner?.title || 'VIP Rewards Banner'}</h3>
+                      <p className={`text-gray-300 mb-6 ${
+                        vipBanner?.size === 'large' ? 'text-lg' :
+                        vipBanner?.size === 'medium' ? 'text-base' :
+                        'text-sm'
+                      }`}>
                         {vipBanner?.description || 'Get rewards and countless premium gaming livestream platform'}
                       </p>
-                      <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/50 transition-all">
+                      <button className={`bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/50 transition-all ${
+                        vipBanner?.size === 'large' ? 'px-8 py-3' :
+                        vipBanner?.size === 'medium' ? 'px-6 py-2.5' :
+                        'px-4 py-2 text-sm'
+                      }`}>
                         {vipBanner?.buttonText || 'Get Started'}
                       </button>
                     </div>
@@ -289,7 +323,7 @@ function LandingPage() {
             >
               Streamer Spotlight
             </motion.h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${pageData.streamersSection?.columns || '4'} gap-6`}>
               {streamers.map((streamer, index) => {
                 const cardContent = (
                   <motion.div
@@ -349,7 +383,7 @@ function LandingPage() {
         {/* Features */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className={`grid grid-cols-1 md:grid-cols-${pageData.featuresSection?.columns || '3'} gap-8`}>
               {features.map((feature, index) => {
                 const IconComponent = getIcon(feature.icon);
                 const content = (
@@ -388,29 +422,34 @@ function LandingPage() {
         {/* Download App Section */}
         <section className="py-20 bg-[#0f0f23]">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className={`grid gap-16 items-center ${
+              downloadSection?.layout === 'center' ? 'grid-cols-1 text-center' :
+              'md:grid-cols-2'
+            } ${downloadSection?.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
               {/* Phone Mockup */}
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-                className="relative"
-              >
-                <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute top-20 right-10 w-32 h-32 bg-[#a855f7]/40 rounded-full blur-2xl animate-pulse"></div>
-                  <div className="absolute bottom-20 left-10 w-32 h-32 bg-[#ec4899]/40 rounded-full blur-2xl animate-pulse delay-500"></div>
-                  {downloadSection?.phoneMockup ? (
-                    <img 
-                      src={downloadSection.phoneMockup} 
-                      alt="Phone mockup" 
-                      className="w-full h-full object-cover relative z-10"
-                    />
-                  ) : (
-                    <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
-                  )}
-                </div>
-              </motion.div>
+              {downloadSection?.layout !== 'center' && (
+                <motion.div
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8 }}
+                  className="relative"
+                >
+                  <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute top-20 right-10 w-32 h-32 bg-[#a855f7]/40 rounded-full blur-2xl animate-pulse"></div>
+                    <div className="absolute bottom-20 left-10 w-32 h-32 bg-[#ec4899]/40 rounded-full blur-2xl animate-pulse delay-500"></div>
+                    {downloadSection?.phoneMockup ? (
+                      <img 
+                        src={downloadSection.phoneMockup} 
+                        alt="Phone mockup" 
+                        className="w-full h-full object-cover relative z-10"
+                      />
+                    ) : (
+                      <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                    )}
+                  </div>
+                </motion.div>
+              )}
 
               {/* Content */}
               <motion.div
@@ -426,7 +465,7 @@ function LandingPage() {
                 <p className="text-xl text-gray-400 leading-relaxed">
                   {downloadSection?.description || 'Stream your app to discover premium gaming livestreams'}
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className={`flex flex-wrap gap-4 ${downloadSection?.layout === 'center' ? 'justify-center' : ''}`}>
                   <a href={downloadSection?.appStoreLink || '#'} target="_blank" rel="noopener noreferrer" className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all flex items-center space-x-4">
                     <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="black">

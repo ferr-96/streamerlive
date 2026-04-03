@@ -49,7 +49,13 @@ function VisualEditor() {
       primaryButtonLink: '#',
       secondaryButtonText: 'Sign Up',
       secondaryButtonLink: '#',
-      characterImage: null
+      characterImage: null,
+      layout: 'left',
+      size: 'full'
+    },
+    categoriesSection: {
+      columns: '6',
+      style: 'cards'
     },
     categories: [
       { id: 'cat1', name: 'Battle Royale', icon: 'Target', gradient: 'from-purple-500 to-pink-500' },
@@ -64,7 +70,12 @@ function VisualEditor() {
       description: 'Get rewards and countless premium gaming livestream platform',
       buttonText: 'Get Started',
       buttonLink: '#',
-      backgroundImage: null
+      backgroundImage: null,
+      size: 'large'
+    },
+    streamersSection: {
+      columns: '4',
+      cardSize: 'medium'
     },
     streamers: [
       { id: 'str1', name: 'Atherton', viewers: '24.5K', image: 'https://i.pravatar.cc/300?img=12', isLive: true, profileUrl: '' },
@@ -72,6 +83,10 @@ function VisualEditor() {
       { id: 'str3', name: 'Geertan', viewers: '32.1K', image: 'https://i.pravatar.cc/300?img=33', isLive: true, profileUrl: '' },
       { id: 'str4', name: 'Monika', viewers: '15.8K', image: 'https://i.pravatar.cc/300?img=47', isLive: true, profileUrl: '' },
     ],
+    featuresSection: {
+      columns: '3',
+      style: 'cards'
+    },
     features: [
       { id: 'feat1', icon: 'Headphones', iconImage: '', title: '24/7 Support', description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.', link: '' },
       { id: 'feat2', icon: 'Lock', iconImage: '', title: 'Secure Platform', description: 'Your data is protected with enterprise-grade security and encryption protocols.', link: '' },
@@ -85,7 +100,8 @@ function VisualEditor() {
       appStoreLink: '#',
       playStoreText: 'Google Play',
       playStoreLink: '#',
-      phoneMockup: null
+      phoneMockup: null,
+      layout: 'left'
     },
     footerLinks: [
       { id: 'link1', text: 'About', url: '#about' },
@@ -177,6 +193,12 @@ function VisualEditor() {
       data = pageData.vipBanner;
     } else if (type === 'download-section') {
       data = pageData.downloadSection;
+    } else if (type === 'categories-section') {
+      data = pageData.categoriesSection;
+    } else if (type === 'streamers-section') {
+      data = pageData.streamersSection;
+    } else if (type === 'features-section') {
+      data = pageData.featuresSection;
     } else if (type.startsWith('category')) {
       data = pageData.categories.find(c => c.id === id);
     } else if (type.startsWith('streamer')) {
@@ -213,6 +235,15 @@ function VisualEditor() {
       } else if (type === 'download-section') {
         console.log('✅ Updating download-section');
         updated.downloadSection = newData;
+      } else if (type === 'categories-section') {
+        console.log('✅ Updating categories-section');
+        updated.categoriesSection = newData;
+      } else if (type === 'streamers-section') {
+        console.log('✅ Updating streamers-section');
+        updated.streamersSection = newData;
+      } else if (type === 'features-section') {
+        console.log('✅ Updating features-section');
+        updated.featuresSection = newData;
       } else if (type.startsWith('category') || type === 'category') {
         console.log('✅ Updating category:', id);
         updated.categories = prev.categories.map(c => c.id === id ? { ...c, ...newData } : c);
@@ -463,8 +494,16 @@ function VisualEditor() {
               onClick={handleElementClick}
               className="py-20"
             >
-              <section className="min-h-[600px] flex items-center">
-                <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+              <section className={`flex items-center ${
+                pageData.hero.size === 'full' ? 'min-h-screen' : 
+                pageData.hero.size === 'medium' ? 'min-h-[500px]' : 
+                'min-h-[300px]'
+              }`}>
+                <div className={`max-w-7xl mx-auto px-6 grid gap-12 items-center ${
+                  pageData.hero.layout === 'center' ? 'grid-cols-1 text-center' :
+                  pageData.hero.layout === 'right' ? 'md:grid-cols-2' : 
+                  'md:grid-cols-2'
+                } ${pageData.hero.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
                   <div className="space-y-8">
                     <h1 className="text-6xl md:text-7xl font-bold leading-tight">
                       {pageData.hero.title.split(' ').slice(0, 2).join(' ')}{' '}
@@ -473,7 +512,7 @@ function VisualEditor() {
                       </span>
                     </h1>
                     <p className="text-xl text-gray-400">{pageData.hero.subtitle}</p>
-                    <div className="flex flex-wrap gap-4">
+                    <div className={`flex flex-wrap gap-4 ${pageData.hero.layout === 'center' ? 'justify-center' : ''}`}>
                       <button className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold">
                         {pageData.hero.primaryButtonText}
                       </button>
@@ -482,11 +521,13 @@ function VisualEditor() {
                       </button>
                     </div>
                   </div>
-                  <div className="relative">
-                    <div className="w-full h-[500px] bg-gradient-to-br from-[#a855f7]/20 via-[#ec4899]/20 to-purple-900/20 rounded-3xl border border-[#a855f7]/30 backdrop-blur-sm flex items-center justify-center">
-                      <Users className="w-32 h-32 text-[#a855f7]/40" />
+                  {pageData.hero.layout !== 'center' && (
+                    <div className="relative">
+                      <div className="w-full h-[500px] bg-gradient-to-br from-[#a855f7]/20 via-[#ec4899]/20 to-purple-900/20 rounded-3xl border border-[#a855f7]/30 backdrop-blur-sm flex items-center justify-center">
+                        <Users className="w-32 h-32 text-[#a855f7]/40" />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </section>
             </EditableElement>
@@ -494,7 +535,20 @@ function VisualEditor() {
             {/* Categories */}
             <section className="py-20 bg-[#0f0f23]">
               <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                {/* Section-level edit badge */}
+                <div className="mb-4 flex justify-end">
+                  <button
+                    onClick={() => handleElementClick('categories-section', 'categories-section')}
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                      selectedElement?.type === 'categories-section'
+                        ? 'bg-cyan-600 text-white'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    ⚙️ Section Layout
+                  </button>
+                </div>
+                <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${pageData.categoriesSection?.columns || '6'} gap-6`}>
                   {pageData.categories.map((category, index) => {
                     const IconComponent = getIcon(category.icon);
                     return (
@@ -545,16 +599,40 @@ function VisualEditor() {
             >
               <section className="max-w-7xl mx-auto px-6">
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#fbbf24] via-[#a855f7] to-[#ec4899] p-1">
-                  <div className="bg-[#0a0a1a] rounded-[22px] p-12">
+                  <div className={`bg-[#0a0a1a] rounded-[22px] ${
+                    pageData.vipBanner.size === 'large' ? 'p-12' :
+                    pageData.vipBanner.size === 'medium' ? 'p-8' :
+                    'p-6'
+                  }`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-start space-x-6">
-                        <div className="w-20 h-20 bg-gradient-to-br from-[#fbbf24] to-orange-500 rounded-full flex items-center justify-center">
-                          <Crown className="w-12 h-12 text-white" />
+                        <div className={`bg-gradient-to-br from-[#fbbf24] to-orange-500 rounded-full flex items-center justify-center ${
+                          pageData.vipBanner.size === 'large' ? 'w-20 h-20' :
+                          pageData.vipBanner.size === 'medium' ? 'w-16 h-16' :
+                          'w-12 h-12'
+                        }`}>
+                          <Crown className={`text-white ${
+                            pageData.vipBanner.size === 'large' ? 'w-12 h-12' :
+                            pageData.vipBanner.size === 'medium' ? 'w-8 h-8' :
+                            'w-6 h-6'
+                          }`} />
                         </div>
                         <div>
-                          <h3 className="text-3xl font-bold mb-3">{pageData.vipBanner.title}</h3>
-                          <p className="text-gray-300 text-lg mb-6">{pageData.vipBanner.description}</p>
-                          <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold">
+                          <h3 className={`font-bold mb-3 ${
+                            pageData.vipBanner.size === 'large' ? 'text-3xl' :
+                            pageData.vipBanner.size === 'medium' ? 'text-2xl' :
+                            'text-xl'
+                          }`}>{pageData.vipBanner.title}</h3>
+                          <p className={`text-gray-300 mb-6 ${
+                            pageData.vipBanner.size === 'large' ? 'text-lg' :
+                            pageData.vipBanner.size === 'medium' ? 'text-base' :
+                            'text-sm'
+                          }`}>{pageData.vipBanner.description}</p>
+                          <button className={`bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold ${
+                            pageData.vipBanner.size === 'large' ? 'px-8 py-3' :
+                            pageData.vipBanner.size === 'medium' ? 'px-6 py-2.5' :
+                            'px-4 py-2 text-sm'
+                          }`}>
                             {pageData.vipBanner.buttonText}
                           </button>
                         </div>
@@ -568,8 +646,20 @@ function VisualEditor() {
             {/* Streamers */}
             <section className="py-20 bg-[#0f0f23]">
               <div className="max-w-7xl mx-auto px-6">
-                <h2 className="text-5xl font-bold mb-16 text-center">Streamer Spotlight</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="mb-4 flex justify-between items-center">
+                  <h2 className="text-5xl font-bold">Streamer Spotlight</h2>
+                  <button
+                    onClick={() => handleElementClick('streamers-section', 'streamers-section')}
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                      selectedElement?.type === 'streamers-section'
+                        ? 'bg-cyan-600 text-white'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    ⚙️ Section Layout
+                  </button>
+                </div>
+                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${pageData.streamersSection?.columns || '4'} gap-6 mt-16`}>
                   {pageData.streamers.map((streamer) => {
                     const cardContent = (
                       <div className="bg-[#0a0a1a] rounded-xl overflow-hidden border border-gray-800 hover:border-[#a855f7] transition-all">
@@ -639,7 +729,19 @@ function VisualEditor() {
             {/* Features */}
             <section className="py-20">
               <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="mb-4 flex justify-end">
+                  <button
+                    onClick={() => handleElementClick('features-section', 'features-section')}
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                      selectedElement?.type === 'features-section'
+                        ? 'bg-cyan-600 text-white'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    ⚙️ Section Layout
+                  </button>
+                </div>
+                <div className={`grid grid-cols-1 md:grid-cols-${pageData.featuresSection?.columns || '3'} gap-8`}>
                   {pageData.features.map((feature) => {
                     const IconComponent = getIcon(feature.icon);
                     return (
@@ -673,18 +775,23 @@ function VisualEditor() {
             >
               <section className="py-20 bg-[#0f0f23]">
                 <div className="max-w-7xl mx-auto px-6">
-                  <div className="grid md:grid-cols-2 gap-16 items-center">
-                    <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center overflow-hidden">
-                      {pageData.downloadSection.phoneMockup ? (
-                        <img 
-                          src={pageData.downloadSection.phoneMockup} 
-                          alt="Phone mockup" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
-                      )}
-                    </div>
+                  <div className={`grid gap-16 items-center ${
+                    pageData.downloadSection.layout === 'center' ? 'grid-cols-1 text-center' :
+                    'md:grid-cols-2'
+                  } ${pageData.downloadSection.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
+                    {pageData.downloadSection.layout !== 'center' && (
+                      <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center overflow-hidden">
+                        {pageData.downloadSection.phoneMockup ? (
+                          <img 
+                            src={pageData.downloadSection.phoneMockup} 
+                            alt="Phone mockup" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                        )}
+                      </div>
+                    )}
                     <div className="space-y-8">
                       <h2 className="text-5xl md:text-6xl font-bold leading-tight">
                         {pageData.downloadSection.heading}<br />
@@ -693,7 +800,7 @@ function VisualEditor() {
                         </span>
                       </h2>
                       <p className="text-xl text-gray-400">{pageData.downloadSection.description}</p>
-                      <div className="flex flex-wrap gap-4">
+                      <div className={`flex flex-wrap gap-4 ${pageData.downloadSection.layout === 'center' ? 'justify-center' : ''}`}>
                         <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
                           {pageData.downloadSection.appStoreText || 'App Store'}
                         </button>

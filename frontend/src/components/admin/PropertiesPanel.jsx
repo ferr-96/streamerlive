@@ -45,7 +45,7 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
     }
   };
 
-  const renderField = (field, label, type = 'text', icon = Type) => {
+  const renderField = (field, label, type = 'text', icon = Type, options = null) => {
     const Icon = icon;
     return (
       <div key={field} className="space-y-2">
@@ -53,7 +53,17 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           <Icon className="w-4 h-4 text-cyan-400" />
           {label}
         </label>
-        {type === 'textarea' ? (
+        {type === 'select' && options ? (
+          <select
+            value={formData[field] || options[0]?.value}
+            onChange={(e) => handleChange(field, e.target.value)}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+          >
+            {options.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        ) : type === 'textarea' ? (
           <textarea
             value={formData[field] || ''}
             onChange={(e) => handleChange(field, e.target.value)}
@@ -108,6 +118,16 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
       case 'hero':
         return (
           <>
+            {renderField('layout', 'Layout', 'select', Layout, [
+              { value: 'left', label: 'Text Left, Image Right' },
+              { value: 'right', label: 'Text Right, Image Left' },
+              { value: 'center', label: 'Text Center (No Image)' }
+            ])}
+            {renderField('size', 'Section Size', 'select', Layout, [
+              { value: 'full', label: 'Full Height' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'compact', label: 'Compact' }
+            ])}
             {renderField('title', 'Hero Title', 'text', Type)}
             {renderField('subtitle', 'Hero Subtitle', 'textarea', Type)}
             {renderField('primaryButtonText', 'Primary Button Text', 'text', Type)}
@@ -115,6 +135,23 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
             {renderField('secondaryButtonText', 'Secondary Button Text', 'text', Type)}
             {renderField('secondaryButtonLink', 'Secondary Button Link', 'url', LinkIcon)}
             {renderField('characterImage', 'Character Image', 'image', ImageIcon)}
+          </>
+        );
+
+      case 'categories-section':
+        return (
+          <>
+            {renderField('columns', 'Columns Per Row', 'select', Layout, [
+              { value: '3', label: '3 Columns' },
+              { value: '4', label: '4 Columns' },
+              { value: '5', label: '5 Columns' },
+              { value: '6', label: '6 Columns' }
+            ])}
+            {renderField('style', 'Icon Style', 'select', Palette, [
+              { value: 'cards', label: 'Cards (Current)' },
+              { value: 'circles', label: 'Circles' },
+              { value: 'minimal', label: 'Minimal' }
+            ])}
           </>
         );
 
@@ -134,11 +171,34 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
       case 'vip-banner':
         return (
           <>
+            {renderField('size', 'Banner Size', 'select', Layout, [
+              { value: 'large', label: 'Large' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'small', label: 'Small / Compact' }
+            ])}
             {renderField('title', 'Banner Title', 'text', Type)}
             {renderField('description', 'Description', 'textarea', Type)}
             {renderField('buttonText', 'Button Text', 'text', Type)}
             {renderField('buttonLink', 'Button Link', 'url', LinkIcon)}
             {renderField('backgroundImage', 'Background Image', 'image', ImageIcon)}
+          </>
+        );
+
+      case 'streamers-section':
+        return (
+          <>
+            {renderField('columns', 'Columns Per Row', 'select', Layout, [
+              { value: '2', label: '2 Columns' },
+              { value: '3', label: '3 Columns' },
+              { value: '4', label: '4 Columns' },
+              { value: '5', label: '5 Columns' },
+              { value: '6', label: '6 Columns' }
+            ])}
+            {renderField('cardSize', 'Card Size', 'select', Layout, [
+              { value: 'large', label: 'Large' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'small', label: 'Small' }
+            ])}
           </>
         );
 
@@ -169,6 +229,22 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           </>
         );
 
+      case 'features-section':
+        return (
+          <>
+            {renderField('columns', 'Columns Per Row', 'select', Layout, [
+              { value: '2', label: '2 Columns' },
+              { value: '3', label: '3 Columns' },
+              { value: '4', label: '4 Columns' }
+            ])}
+            {renderField('style', 'Card Style', 'select', Palette, [
+              { value: 'cards', label: 'Cards (Current)' },
+              { value: 'minimal', label: 'Minimal' },
+              { value: 'icons-only', label: 'Icons Only' }
+            ])}
+          </>
+        );
+
       case 'feature':
         return (
           <>
@@ -189,6 +265,11 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
       case 'download-section':
         return (
           <>
+            {renderField('layout', 'Layout', 'select', Layout, [
+              { value: 'left', label: 'Phone Left, Text Right' },
+              { value: 'right', label: 'Phone Right, Text Left' },
+              { value: 'center', label: 'Text Center (No Phone)' }
+            ])}
             {renderField('heading', 'Main Heading', 'text', Type)}
             {renderField('subheading', 'Sub Heading', 'text', Type)}
             {renderField('description', 'Description', 'textarea', Type)}
