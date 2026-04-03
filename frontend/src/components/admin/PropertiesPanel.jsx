@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Upload, Trash2, ChevronUp, ChevronDown, 
   Save, Image as ImageIcon, Type, Link as LinkIcon,
-  Palette, Layout, Eye
+  Palette, Layout, Eye, Check
 } from 'lucide-react';
 
 /**
@@ -11,11 +11,13 @@ import {
  */
 function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
   const [formData, setFormData] = useState(selectedElement?.data || {});
+  const [saveStatus, setSaveStatus] = useState('idle'); // idle, saving, saved
 
   // Sync formData when selectedElement changes
   useEffect(() => {
     if (selectedElement?.data) {
       setFormData(selectedElement.data);
+      setSaveStatus('idle');
     }
   }, [selectedElement]);
 
@@ -263,14 +265,40 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           {/* Save Button */}
           <button
             type="button"
+            disabled={saveStatus === 'saving'}
             onClick={() => {
+              setSaveStatus('saving');
               console.log('💾 Save button clicked!', { id: selectedElement.id, formData, type: selectedElement.type });
               onUpdate(selectedElement.id, formData, selectedElement.type);
+              setTimeout(() => {
+                setSaveStatus('saved');
+                setTimeout(() => setSaveStatus('idle'), 2000);
+              }, 300);
             }}
-            className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2 transition-all font-medium cursor-pointer"
+            className={`w-full rounded-lg px-4 py-3 flex items-center justify-center gap-2 transition-all font-medium cursor-pointer ${
+              saveStatus === 'saved' 
+                ? 'bg-green-600 hover:bg-green-700' 
+                : saveStatus === 'saving'
+                ? 'bg-yellow-600 cursor-wait'
+                : 'bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800'
+            } text-white`}
           >
-            <Save className="w-4 h-4" />
-            Save Changes
+            {saveStatus === 'saving' ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Saving...
+              </>
+            ) : saveStatus === 'saved' ? (
+              <>
+                <Check className="w-4 h-4" />
+                Saved!
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                Save Changes
+              </>
+            )}
           </button>
 
           {/* Delete Button */}
