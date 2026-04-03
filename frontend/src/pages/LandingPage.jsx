@@ -1,43 +1,77 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Play, Crown, Target, Swords, Trophy, Dices, Gamepad2,
   Users, Headphones, Lock, Award, Smartphone
 } from 'lucide-react';
 
-function LandingPage() {
-  const categories = [
-    { name: 'Battle Royale', icon: Target, gradient: 'from-purple-500 to-pink-500' },
-    { name: 'RPG', icon: Swords, gradient: 'from-pink-500 to-purple-600' },
-    { name: 'Sports', icon: Trophy, gradient: 'from-purple-600 to-pink-400' },
-    { name: 'Casino', icon: Dices, gradient: 'from-pink-400 to-purple-500' },
-    { name: 'Strategy', icon: Gamepad2, gradient: 'from-purple-500 to-pink-600' },
-    { name: 'Arcade', icon: Play, gradient: 'from-pink-600 to-purple-400' },
-  ];
+const STORAGE_KEY = 'streamerlive_editor_data';
 
-  const streamers = [
-    { name: 'Atherton', viewers: '24.5K', image: 'https://i.pravatar.cc/300?img=12' },
-    { name: 'Nana', viewers: '18.2K', image: 'https://i.pravatar.cc/300?img=45' },
-    { name: 'Geertan', viewers: '32.1K', image: 'https://i.pravatar.cc/300?img=33' },
-    { name: 'Monika', viewers: '15.8K', image: 'https://i.pravatar.cc/300?img=47' },
-  ];
-
-  const features = [
+// Default fallback data
+const defaultData = {
+  categories: [
+    { name: 'Battle Royale', icon: 'Target', gradient: 'from-purple-500 to-pink-500' },
+    { name: 'RPG', icon: 'Swords', gradient: 'from-pink-500 to-purple-600' },
+    { name: 'Sports', icon: 'Trophy', gradient: 'from-purple-600 to-pink-400' },
+    { name: 'Casino', icon: 'Dices', gradient: 'from-pink-400 to-purple-500' },
+    { name: 'Strategy', icon: 'Gamepad2', gradient: 'from-purple-500 to-pink-600' },
+    { name: 'Arcade', icon: 'Play', gradient: 'from-pink-600 to-purple-400' },
+  ],
+  streamers: [
+    { name: 'Atherton', viewers: '24.5K', image: 'https://i.pravatar.cc/300?img=12', profileUrl: '' },
+    { name: 'Nana', viewers: '18.2K', image: 'https://i.pravatar.cc/300?img=45', profileUrl: '' },
+    { name: 'Geertan', viewers: '32.1K', image: 'https://i.pravatar.cc/300?img=33', profileUrl: '' },
+    { name: 'Monika', viewers: '15.8K', image: 'https://i.pravatar.cc/300?img=47', profileUrl: '' },
+  ],
+  features: [
     {
-      icon: Headphones,
+      icon: 'Headphones',
       title: '24/7 Support',
       description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.'
     },
     {
-      icon: Lock,
+      icon: 'Lock',
       title: 'Secure Platform',
       description: 'Your data is protected with enterprise-grade security and encryption protocols.'
     },
     {
-      icon: Award,
+      icon: 'Award',
       title: 'Instant Rewards',
       description: 'Earn points and unlock exclusive benefits immediately as you stream and engage.'
     },
-  ];
+  ]
+};
+
+function LandingPage() {
+  const [pageData, setPageData] = useState(defaultData);
+
+  // Load data from localStorage on mount
+  useEffect(() => {
+    const cached = localStorage.getItem(STORAGE_KEY);
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        setPageData({
+          categories: data.categories || defaultData.categories,
+          streamers: data.streamers || defaultData.streamers,
+          features: data.features || defaultData.features
+        });
+      } catch (error) {
+        console.error('Failed to parse cached data:', error);
+      }
+    }
+  }, []);
+
+  // Icon mapping
+  const getIcon = (iconName) => {
+    const icons = {
+      Target, Swords, Trophy, Dices, Gamepad2, Play,
+      Headphones, Lock, Award, Users, Crown, Smartphone
+    };
+    return icons[iconName] || Target;
+  };
+
+  const { categories, streamers, features } = pageData;
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white">
@@ -128,18 +162,22 @@ function LandingPage() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
               {categories.map((category, index) => {
-                const IconComponent = category.icon;
+                const IconComponent = getIcon(category.icon);
                 return (
                   <motion.div
-                    key={category.name}
+                    key={category.id || category.name}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="bg-[#0a0a1a] border border-gray-800 rounded-xl p-6 hover:border-[#a855f7] transition-all cursor-pointer group"
                   >
-                    <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                      <IconComponent className="w-8 h-8 text-white" />
+                    <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden`}>
+                      {category.iconImage ? (
+                        <img src={category.iconImage} className="w-full h-full object-cover" alt={category.name} />
+                      ) : (
+                        <IconComponent className="w-8 h-8 text-white" />
+                      )}
                     </div>
                     <p className="text-center text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
                       {category.name}
@@ -195,46 +233,58 @@ function LandingPage() {
               Streamer Spotlight
             </motion.h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {streamers.map((streamer, index) => (
-                <motion.div
-                  key={streamer.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-[#0a0a1a] rounded-xl overflow-hidden border border-gray-800 hover:border-[#a855f7] transition-all group"
-                >
-                  {/* Profile Image */}
-                  <div className="relative overflow-hidden">
-                    <img 
-                      src={streamer.image} 
-                      alt={streamer.name}
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    {/* Live Badge */}
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full flex items-center space-x-1.5">
-                      <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                      <span>LIVE</span>
+              {streamers.map((streamer, index) => {
+                const cardContent = (
+                  <motion.div
+                    key={streamer.id || streamer.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-[#0a0a1a] rounded-xl overflow-hidden border border-gray-800 hover:border-[#a855f7] transition-all group"
+                  >
+                    {/* Profile Image */}
+                    <div className="relative overflow-hidden">
+                      <img 
+                        src={streamer.image} 
+                        alt={streamer.name}
+                        className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      {/* Live Badge */}
+                      {streamer.isLive !== false && (
+                        <div className="absolute top-4 left-4 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full flex items-center space-x-1.5">
+                          <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                          <span>LIVE</span>
+                        </div>
+                      )}
+                      {/* Viewer Count */}
+                      <div className="absolute top-4 right-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-white text-sm rounded-full flex items-center space-x-1.5">
+                        <Users className="w-4 h-4" />
+                        <span className="font-semibold">{streamer.viewers}</span>
+                      </div>
                     </div>
-                    {/* Viewer Count */}
-                    <div className="absolute top-4 right-4 px-3 py-1.5 bg-black/70 backdrop-blur-md text-white text-sm rounded-full flex items-center space-x-1.5">
-                      <Users className="w-4 h-4" />
-                      <span className="font-semibold">{streamer.viewers}</span>
+                    
+                    {/* Card Content */}
+                    <div className="p-6 space-y-4">
+                      <div>
+                        <h3 className="text-xl font-bold">{streamer.name}</h3>
+                        <p className="text-gray-400 text-sm">Streamer</p>
+                      </div>
+                      <button className="w-full py-3 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+                        Follow
+                      </button>
                     </div>
-                  </div>
-                  
-                  {/* Card Content */}
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <h3 className="text-xl font-bold">{streamer.name}</h3>
-                      <p className="text-gray-400 text-sm">Streamer</p>
-                    </div>
-                    <button className="w-full py-3 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
-                      Follow
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+
+                return streamer.profileUrl ? (
+                  <a key={streamer.id || streamer.name} href={streamer.profileUrl} target="_blank" rel="noopener noreferrer">
+                    {cardContent}
+                  </a>
+                ) : (
+                  cardContent
+                );
+              })}
             </div>
           </div>
         </section>
@@ -244,10 +294,10 @@ function LandingPage() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {features.map((feature, index) => {
-                const IconComponent = feature.icon;
+                const IconComponent = getIcon(feature.icon);
                 return (
                   <motion.div
-                    key={feature.title}
+                    key={feature.id || feature.title}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}

@@ -109,7 +109,11 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
         return (
           <>
             {renderField('name', 'Category Name', 'text', Type)}
-            {renderField('icon', 'Icon Name (Lucide)', 'text', Layout)}
+            {renderField('iconImage', 'Category Icon Image', 'image', ImageIcon)}
+            <div className="text-xs text-gray-400 -mt-1 mb-2 pl-1">
+              Upload a custom icon image, or leave empty to use Lucide icon
+            </div>
+            {renderField('icon', 'Icon Name (Lucide) - Fallback', 'text', Layout)}
             {renderField('gradient', 'Gradient Classes', 'text', Palette)}
           </>
         );
@@ -130,6 +134,10 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           <>
             {renderField('name', 'Streamer Name', 'text', Type)}
             {renderField('image', 'Profile Image', 'image', ImageIcon)}
+            {renderField('profileUrl', 'Profile URL', 'url', LinkIcon)}
+            <div className="text-xs text-gray-400 -mt-1 mb-2 pl-1">
+              Link to the streamer's profile page (opens in new tab)
+            </div>
             {renderField('viewers', 'Viewer Count', 'text', Eye)}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300 flex items-center gap-2">

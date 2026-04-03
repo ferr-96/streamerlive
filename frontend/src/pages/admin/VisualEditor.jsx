@@ -209,6 +209,42 @@ function VisualEditor() {
 
       return updated;
     });
+    setSelectedElement(null);
+  };
+
+  const handleAddCategory = () => {
+    const newCategory = {
+      id: `cat${Date.now()}`,
+      name: 'New Category',
+      icon: 'Target',
+      iconImage: null,
+      gradient: 'from-purple-500 to-pink-500'
+    };
+    
+    setPageData(prev => ({
+      ...prev,
+      categories: [...prev.categories, newCategory]
+    }));
+    
+    setSelectedElement({ id: newCategory.id, type: 'category', data: newCategory });
+  };
+
+  const handleAddStreamer = () => {
+    const newStreamer = {
+      id: `str${Date.now()}`,
+      name: 'New Streamer',
+      viewers: '0K',
+      image: 'https://i.pravatar.cc/300?img=1',
+      profileUrl: '',
+      isLive: true
+    };
+    
+    setPageData(prev => ({
+      ...prev,
+      streamers: [...prev.streamers, newStreamer]
+    }));
+    
+    setSelectedElement({ id: newStreamer.id, type: 'streamer-card', data: newStreamer });
   };
 
   const getIcon = (iconName) => {
@@ -372,8 +408,12 @@ function VisualEditor() {
                         onClick={handleElementClick}
                       >
                         <div className="bg-[#0a0a1a] border border-gray-800 rounded-xl p-6 hover:border-[#a855f7] transition-all cursor-pointer">
-                          <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center`}>
-                            <IconComponent className="w-8 h-8 text-white" />
+                          <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center overflow-hidden`}>
+                            {category.iconImage ? (
+                              <img src={category.iconImage} className="w-full h-full object-cover" alt={category.name} />
+                            ) : (
+                              <IconComponent className="w-8 h-8 text-white" />
+                            )}
                           </div>
                           <p className="text-center text-sm font-medium text-gray-300">
                             {category.name}
@@ -382,6 +422,17 @@ function VisualEditor() {
                       </EditableElement>
                     );
                   })}
+                </div>
+                
+                {/* Add Category Button */}
+                <div className="mt-8 flex justify-center">
+                  <button
+                    onClick={handleAddCategory}
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg flex items-center gap-2 transition-all font-medium shadow-lg"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Category
+                  </button>
                 </div>
               </div>
             </section>
@@ -421,15 +472,8 @@ function VisualEditor() {
               <div className="max-w-7xl mx-auto px-6">
                 <h2 className="text-5xl font-bold mb-16 text-center">Streamer Spotlight</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {pageData.streamers.map((streamer) => (
-                    <EditableElement
-                      key={streamer.id}
-                      id={streamer.id}
-                      type="streamer-card"
-                      isSelected={selectedElement?.id === streamer.id}
-                      onClick={handleElementClick}
-                      isDraggable
-                    >
+                  {pageData.streamers.map((streamer) => {
+                    const cardContent = (
                       <div className="bg-[#0a0a1a] rounded-xl overflow-hidden border border-gray-800 hover:border-[#a855f7] transition-all">
                         <div className="relative">
                           <img 
@@ -458,8 +502,38 @@ function VisualEditor() {
                           </button>
                         </div>
                       </div>
-                    </EditableElement>
-                  ))}
+                    );
+                    
+                    return (
+                      <EditableElement
+                        key={streamer.id}
+                        id={streamer.id}
+                        type="streamer-card"
+                        isSelected={selectedElement?.id === streamer.id}
+                        onClick={handleElementClick}
+                        isDraggable
+                      >
+                        {streamer.profileUrl ? (
+                          <a href={streamer.profileUrl} target="_blank" rel="noopener noreferrer">
+                            {cardContent}
+                          </a>
+                        ) : (
+                          cardContent
+                        )}
+                      </EditableElement>
+                    );
+                  })}
+                </div>
+                
+                {/* Add Streamer Button */}
+                <div className="mt-8 flex justify-center">
+                  <button
+                    onClick={handleAddStreamer}
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg flex items-center gap-2 transition-all font-medium shadow-lg"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Streamer
+                  </button>
                 </div>
               </div>
             </section>
