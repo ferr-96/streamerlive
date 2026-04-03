@@ -175,6 +175,14 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
             {renderField('title', 'Feature Title', 'text', Type)}
             {renderField('description', 'Description', 'textarea', Type)}
             {renderField('icon', 'Icon Name (Lucide)', 'text', Layout)}
+            {renderField('iconImage', 'Custom Icon Image', 'image', ImageIcon)}
+            <div className="text-xs text-gray-400 -mt-1 mb-2 pl-1">
+              Upload custom icon (overrides Lucide icon)
+            </div>
+            {renderField('link', 'Link URL', 'url', LinkIcon)}
+            <div className="text-xs text-gray-400 -mt-1 mb-2 pl-1">
+              Click feature card to redirect to this URL
+            </div>
           </>
         );
 

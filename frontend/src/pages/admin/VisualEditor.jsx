@@ -61,9 +61,9 @@ function VisualEditor() {
       { id: 'str4', name: 'Monika', viewers: '15.8K', image: 'https://i.pravatar.cc/300?img=47', isLive: true, profileUrl: '' },
     ],
     features: [
-      { id: 'feat1', icon: 'Headphones', title: '24/7 Support', description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.' },
-      { id: 'feat2', icon: 'Lock', title: 'Secure Platform', description: 'Your data is protected with enterprise-grade security and encryption protocols.' },
-      { id: 'feat3', icon: 'Award', title: 'Instant Rewards', description: 'Earn points and unlock exclusive benefits immediately as you stream and engage.' },
+      { id: 'feat1', icon: 'Headphones', iconImage: '', title: '24/7 Support', description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.', link: '' },
+      { id: 'feat2', icon: 'Lock', iconImage: '', title: 'Secure Platform', description: 'Your data is protected with enterprise-grade security and encryption protocols.', link: '' },
+      { id: 'feat3', icon: 'Award', iconImage: '', title: 'Instant Rewards', description: 'Earn points and unlock exclusive benefits immediately as you stream and engage.', link: '' },
     ],
     downloadSection: {
       heading: 'Download App',

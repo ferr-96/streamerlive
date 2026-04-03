@@ -47,18 +47,24 @@ const defaultData = {
   features: [
     {
       icon: 'Headphones',
+      iconImage: '',
       title: '24/7 Support',
-      description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.'
+      description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.',
+      link: ''
     },
     {
       icon: 'Lock',
+      iconImage: '',
       title: 'Secure Platform',
-      description: 'Your data is protected with enterprise-grade security and encryption protocols.'
+      description: 'Your data is protected with enterprise-grade security and encryption protocols.',
+      link: ''
     },
     {
       icon: 'Award',
+      iconImage: '',
       title: 'Instant Rewards',
-      description: 'Earn points and unlock exclusive benefits immediately as you stream and engage.'
+      description: 'Earn points and unlock exclusive benefits immediately as you stream and engage.',
+      link: ''
     },
   ]
 };
@@ -346,21 +352,33 @@ function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {features.map((feature, index) => {
                 const IconComponent = getIcon(feature.icon);
-                return (
+                const content = (
                   <motion.div
                     key={feature.id || feature.title}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-[#0f0f23] border border-gray-800 rounded-xl p-8 hover:border-[#a855f7] transition-all"
+                    className={`bg-[#0f0f23] border border-gray-800 rounded-xl p-8 hover:border-[#a855f7] transition-all ${feature.link ? 'cursor-pointer' : ''}`}
                   >
                     <div className="w-16 h-16 bg-gradient-to-br from-[#a855f7] to-[#ec4899] rounded-xl flex items-center justify-center mb-6">
-                      <IconComponent className="w-8 h-8 text-white" />
+                      {feature.iconImage ? (
+                        <img src={feature.iconImage} alt={feature.title} className="w-8 h-8 object-contain" />
+                      ) : (
+                        <IconComponent className="w-8 h-8 text-white" />
+                      )}
                     </div>
                     <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
                     <p className="text-gray-400 leading-relaxed">{feature.description}</p>
                   </motion.div>
+                );
+                
+                return feature.link ? (
+                  <a key={feature.id || feature.title} href={feature.link} target="_blank" rel="noopener noreferrer">
+                    {content}
+                  </a>
+                ) : (
+                  <div key={feature.id || feature.title}>{content}</div>
                 );
               })}
             </div>
