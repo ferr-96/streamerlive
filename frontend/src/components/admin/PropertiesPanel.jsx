@@ -219,7 +219,7 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 400, opacity: 0 }}
         transition={{ type: 'spring', damping: 25 }}
-        className="fixed right-0 top-0 h-screen w-96 bg-gray-900 border-l border-gray-800 shadow-2xl z-50 flex flex-col"
+        className="fixed right-0 top-0 h-screen w-96 bg-gray-900 border-l border-gray-800 shadow-2xl z-[100] flex flex-col"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-cyan-600 to-purple-600 p-6 flex items-center justify-between">
@@ -262,8 +262,12 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
 
           {/* Save Button */}
           <button
-            onClick={() => onUpdate(selectedElement.id, formData, selectedElement.type)}
-            className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2 transition-all font-medium"
+            type="button"
+            onClick={() => {
+              console.log('💾 Save button clicked!', { id: selectedElement.id, formData, type: selectedElement.type });
+              onUpdate(selectedElement.id, formData, selectedElement.type);
+            }}
+            className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2 transition-all font-medium cursor-pointer"
           >
             <Save className="w-4 h-4" />
             Save Changes
