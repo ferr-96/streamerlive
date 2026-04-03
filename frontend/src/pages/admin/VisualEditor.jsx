@@ -93,15 +93,7 @@ function VisualEditor() {
     loadData();
   }, []);
 
-  // Auto-save to localStorage
-  useEffect(() => {
-    console.log('💾 Auto-saving to localStorage:', pageData);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(pageData));
-    console.log('✅ localStorage.setItem called with key:', STORAGE_KEY);
-    
-    // Dispatch custom event so landing page can update in real-time
-    window.dispatchEvent(new CustomEvent('streamerlive-data-updated'));
-  }, [pageData]);
+  // NOTE: Removed auto-save - now only saves when Save button is clicked
 
   const loadData = async () => {
     try {
@@ -135,14 +127,20 @@ function VisualEditor() {
     setSaveStatus('');
 
     try {
-      // Always save to localStorage
+      // Save to localStorage
+      console.log('💾 Saving to localStorage:', pageData);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(pageData));
+      console.log('✅ localStorage.setItem called with key:', STORAGE_KEY);
+      
+      // Dispatch custom event so landing page updates
+      window.dispatchEvent(new CustomEvent('streamerlive-data-updated'));
+      console.log('📢 Dispatched streamerlive-data-updated event');
 
       // Try saving to API
       if (isOnline) {
         // In production, send to respective endpoints
         // For now, just simulate
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
 
       setSaveStatus('success');
