@@ -1,0 +1,13 @@
+{
+  "name": "streamerlive",
+  "version": "1.0.0",
+  "description": "StreamerLive - Modern Streaming Platform",
+  "scripts": {
+    "build": "cd frontend && npm ci --include=dev && npm run build",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm start"
+  },
+  "keywords": ["streaming", "platform", "react", "vite"],
+  "author": "ferr-96",
+  "license": "MIT"
+}
