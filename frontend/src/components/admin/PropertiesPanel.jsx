@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Upload, Trash2, ChevronUp, ChevronDown, 
@@ -11,6 +11,13 @@ import {
  */
 function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
   const [formData, setFormData] = useState(selectedElement?.data || {});
+
+  // Sync formData when selectedElement changes
+  useEffect(() => {
+    if (selectedElement?.data) {
+      setFormData(selectedElement.data);
+    }
+  }, [selectedElement]);
 
   if (!selectedElement) return null;
 
