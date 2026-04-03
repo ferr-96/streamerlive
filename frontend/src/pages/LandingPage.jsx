@@ -400,7 +400,15 @@ function LandingPage() {
                 <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center relative overflow-hidden">
                   <div className="absolute top-20 right-10 w-32 h-32 bg-[#a855f7]/40 rounded-full blur-2xl animate-pulse"></div>
                   <div className="absolute bottom-20 left-10 w-32 h-32 bg-[#ec4899]/40 rounded-full blur-2xl animate-pulse delay-500"></div>
-                  <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                  {downloadSection?.phoneMockup ? (
+                    <img 
+                      src={downloadSection.phoneMockup} 
+                      alt="Phone mockup" 
+                      className="w-full h-full object-cover relative z-10"
+                    />
+                  ) : (
+                    <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                  )}
                 </div>
               </motion.div>
 

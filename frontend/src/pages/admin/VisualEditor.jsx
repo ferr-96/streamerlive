@@ -600,8 +600,16 @@ function VisualEditor() {
               <section className="py-20 bg-[#0f0f23]">
                 <div className="max-w-7xl mx-auto px-6">
                   <div className="grid md:grid-cols-2 gap-16 items-center">
-                    <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center">
-                      <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                    <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center overflow-hidden">
+                      {pageData.downloadSection.phoneMockup ? (
+                        <img 
+                          src={pageData.downloadSection.phoneMockup} 
+                          alt="Phone mockup" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                      )}
                     </div>
                     <div className="space-y-8">
                       <h2 className="text-5xl md:text-6xl font-bold leading-tight">
