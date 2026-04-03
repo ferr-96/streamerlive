@@ -9,6 +9,27 @@ const STORAGE_KEY = 'streamerlive_editor_data';
 
 // Default fallback data
 const defaultData = {
+  header: {
+    siteName: 'StreamerLive',
+    logo: null
+  },
+  hero: {
+    title: 'Join Elite Streamers',
+    subtitle: 'A premium gaming livestream platform',
+    primaryButtonText: 'CTA Streamers',
+    secondaryButtonText: 'Sign Up'
+  },
+  vipBanner: {
+    title: 'VIP Rewards Banner',
+    description: 'Get rewards and countless premium gaming livestream platform',
+    buttonText: 'Get Started'
+  },
+  downloadSection: {
+    title: 'Download App Stream Anywhere',
+    description: 'Stream your app to discover premium gaming livestreams',
+    appStoreLink: '#',
+    playStoreLink: '#'
+  },
   categories: [
     { name: 'Battle Royale', icon: 'Target', gradient: 'from-purple-500 to-pink-500' },
     { name: 'RPG', icon: 'Swords', gradient: 'from-pink-500 to-purple-600' },
@@ -45,21 +66,51 @@ const defaultData = {
 function LandingPage() {
   const [pageData, setPageData] = useState(defaultData);
 
-  // Load data from localStorage on mount
+  // Load data from localStorage on mount AND listen for changes
   useEffect(() => {
-    const cached = localStorage.getItem(STORAGE_KEY);
-    if (cached) {
-      try {
-        const data = JSON.parse(cached);
-        setPageData({
-          categories: data.categories || defaultData.categories,
-          streamers: data.streamers || defaultData.streamers,
-          features: data.features || defaultData.features
-        });
-      } catch (error) {
-        console.error('Failed to parse cached data:', error);
+    const loadData = () => {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          setPageData(prev => ({
+            ...prev,
+            ...data,
+            categories: data.categories || defaultData.categories,
+            streamers: data.streamers || defaultData.streamers,
+            features: data.features || defaultData.features
+          }));
+          console.log('📄 LandingPage loaded data from localStorage');
+        } catch (error) {
+          console.error('Failed to parse cached data:', error);
+        }
       }
-    }
+    };
+
+    // Load initially
+    loadData();
+
+    // Listen for storage changes (from other tabs or visual editor)
+    const handleStorageChange = (e) => {
+      if (e.key === STORAGE_KEY) {
+        console.log('🔄 Storage changed, reloading data...');
+        loadData();
+      }
+    };
+
+    // Listen for custom event from visual editor (same tab)
+    const handleDataUpdate = () => {
+      console.log('🔄 Data update event received');
+      loadData();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('streamerlive-data-updated', handleDataUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('streamerlive-data-updated', handleDataUpdate);
+    };
   }, []);
 
   // Icon mapping
@@ -71,7 +122,7 @@ function LandingPage() {
     return icons[iconName] || Target;
   };
 
-  const { categories, streamers, features } = pageData;
+  const { categories, streamers, features, header, hero, vipBanner, downloadSection } = pageData;
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white">
@@ -85,7 +136,7 @@ function LandingPage() {
                 <Play className="w-6 h-6 text-white fill-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
-                StreamerLive
+                {header?.siteName || 'StreamerLive'}
               </span>
             </div>
 
@@ -125,17 +176,17 @@ function LandingPage() {
               className="space-y-8"
             >
               <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                Join Elite <span className="bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">Streamers</span>
+                {hero?.title || 'Join Elite Streamers'}
               </h1>
               <p className="text-xl text-gray-400">
-                A premium gaming livestream platform
+                {hero?.subtitle || 'A premium gaming livestream platform'}
               </p>
               <div className="flex flex-wrap gap-4">
                 <button className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
-                  CTA Streamers
+                  {hero?.primaryButtonText || 'CTA Streamers'}
                 </button>
                 <button className="px-8 py-4 border-2 border-[#a855f7] text-[#a855f7] rounded-lg font-semibold hover:bg-[#a855f7]/10 transition-all">
-                  Sign Up
+                  {hero?.secondaryButtonText || 'Sign Up'}
                 </button>
               </div>
             </motion.div>
@@ -200,12 +251,12 @@ function LandingPage() {
                       <Crown className="w-12 h-12 text-white" />
                     </div>
                     <div className="text-left">
-                      <h3 className="text-3xl font-bold mb-3">VIP Rewards Banner</h3>
+                      <h3 className="text-3xl font-bold mb-3">{vipBanner?.title || 'VIP Rewards Banner'}</h3>
                       <p className="text-gray-300 text-lg mb-6">
-                        Get rewards and countless premium gaming livestream platform
+                        {vipBanner?.description || 'Get rewards and countless premium gaming livestream platform'}
                       </p>
                       <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/50 transition-all">
-                        Get Started
+                        {vipBanner?.buttonText || 'Get Started'}
                       </button>
                     </div>
                   </div>
@@ -344,13 +395,10 @@ function LandingPage() {
                 className="space-y-8"
               >
                 <h2 className="text-5xl md:text-6xl font-bold leading-tight">
-                  Download App<br />
-                  <span className="bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
-                    Stream Anywhere
-                  </span>
+                  {downloadSection?.title || 'Download App Stream Anywhere'}
                 </h2>
                 <p className="text-xl text-gray-400 leading-relaxed">
-                  Stream your app to discover premium gaming livestreams
+                  {downloadSection?.description || 'Stream your app to discover premium gaming livestreams'}
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all flex items-center space-x-4">

@@ -96,6 +96,9 @@ function VisualEditor() {
     console.log('💾 Auto-saving to localStorage:', pageData);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pageData));
     console.log('✅ localStorage.setItem called with key:', STORAGE_KEY);
+    
+    // Dispatch custom event so landing page can update in real-time
+    window.dispatchEvent(new CustomEvent('streamerlive-data-updated'));
   }, [pageData]);
 
   const loadData = async () => {
