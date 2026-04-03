@@ -12,12 +12,24 @@ import api from '../../services/api';
 const STORAGE_KEY = 'streamerlive_editor_data';
 const API_BASE = import.meta.env.VITE_API_URL || 'http://139.59.242.118:3001/api';
 
+// Default section templates for adding/resetting
+const DEFAULT_SECTIONS = {
+  header: { siteName: 'StreamerLive', logo: null },
+  hero: { title: 'Join Elite Streamers', subtitle: 'A premium gaming livestream platform', primaryButtonText: 'CTA Streamers', primaryButtonLink: '#', secondaryButtonText: 'Sign Up', secondaryButtonLink: '#', characterImage: null },
+  vipBanner: { title: 'VIP Rewards Banner', description: 'Get rewards and countless premium gaming livestream platform', buttonText: 'Get Started', buttonLink: '#', backgroundImage: null },
+  downloadSection: { heading: 'Download App', subheading: 'Stream Anywhere', description: 'Stream your app to discover premium gaming livestreams', appStoreText: 'App Store', appStoreLink: '#', playStoreText: 'Google Play', playStoreLink: '#', phoneMockup: null },
+  newCategory: { name: 'New Category', icon: 'Target', iconImage: '', gradient: 'from-purple-500 to-pink-500' },
+  newStreamer: { name: 'New Streamer', viewers: '0K', image: 'https://i.pravatar.cc/300?img=1', isLive: true, profileUrl: '' },
+  newFeature: { icon: 'Award', iconImage: '', title: 'New Feature', description: 'Feature description here', link: '' },
+};
+
 /**
  * VisualEditor - WYSIWYG page builder for StreamerLive
  */
 function VisualEditor() {
   // Editor State
   const [selectedElement, setSelectedElement] = useState(null);
+  const [showAddMenu, setShowAddMenu] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
@@ -236,6 +248,35 @@ function VisualEditor() {
     setSelectedElement(null);
   };
 
+  // Reset a section to default
+  const handleResetSection = (sectionName) => {
+    if (confirm(`Reset ${sectionName} to default? This will overwrite your current changes.`)) {
+      setPageData(prev => ({
+        ...prev,
+        [sectionName]: DEFAULT_SECTIONS[sectionName]
+      }));
+      setShowAddMenu(false);
+    }
+  };
+
+  // Add a new item to an array section
+  const handleAddItem = (sectionName) => {
+    const templateKey = `new${sectionName.charAt(0).toUpperCase() + sectionName.slice(1, -1)}`;
+    const template = DEFAULT_SECTIONS[templateKey];
+    if (!template) return;
+
+    const newItem = {
+      ...template,
+      id: `${sectionName.slice(0, -1)}${Date.now()}`
+    };
+
+    setPageData(prev => ({
+      ...prev,
+      [sectionName]: [...(prev[sectionName] || []), newItem]
+    }));
+    setShowAddMenu(false);
+  };
+
   const handleAddCategory = () => {
     const newCategory = {
       id: `cat${Date.now()}`,
@@ -329,6 +370,39 @@ function VisualEditor() {
                   </>
                 )}
               </button>
+              
+              {/* Add/Reset Section Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowAddMenu(!showAddMenu)}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2 transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add / Reset
+                </button>
+                
+                {showAddMenu && (
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
+                    <div className="p-2 border-b border-gray-700">
+                      <p className="text-xs text-gray-400 uppercase font-semibold px-2">Reset Section to Default</p>
+                    </div>
+                    <div className="p-1">
+                      <button onClick={() => handleResetSection('header')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">🏠 Header</button>
+                      <button onClick={() => handleResetSection('hero')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">⭐ Hero Section</button>
+                      <button onClick={() => handleResetSection('vipBanner')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">👑 VIP Banner</button>
+                      <button onClick={() => handleResetSection('downloadSection')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">📱 Download Section</button>
+                    </div>
+                    <div className="p-2 border-t border-gray-700">
+                      <p className="text-xs text-gray-400 uppercase font-semibold px-2">Add New Item</p>
+                    </div>
+                    <div className="p-1">
+                      <button onClick={() => handleAddItem('categories')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Category</button>
+                      <button onClick={() => handleAddItem('streamers')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Streamer</button>
+                      <button onClick={() => handleAddItem('features')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Feature</button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
