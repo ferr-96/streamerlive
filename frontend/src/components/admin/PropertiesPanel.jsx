@@ -81,16 +81,28 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
                 />
               </div>
             )}
-            <label className="flex items-center justify-center gap-2 w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-4 py-3 cursor-pointer transition-all">
-              <Upload className="w-4 h-4" />
-              Upload Image
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload(field)}
-                className="hidden"
-              />
-            </label>
+            <div className="flex gap-2">
+              <label className="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-4 py-3 cursor-pointer transition-all">
+                <Upload className="w-4 h-4" />
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload(field)}
+                  className="hidden"
+                />
+              </label>
+              {formData[field] && (
+                <button
+                  type="button"
+                  onClick={() => handleChange(field, '')}
+                  className="px-4 py-3 bg-red-600/20 hover:bg-red-600/30 border border-red-600/50 text-red-400 rounded-lg transition-all"
+                  title="Remove image"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <input
