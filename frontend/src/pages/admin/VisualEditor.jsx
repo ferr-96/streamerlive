@@ -69,7 +69,9 @@ function VisualEditor() {
       heading: 'Download App',
       subheading: 'Stream Anywhere',
       description: 'Stream your app to discover premium gaming livestreams',
+      appStoreText: 'App Store',
       appStoreLink: '#',
+      playStoreText: 'Google Play',
       playStoreLink: '#',
       phoneMockup: null
     },
@@ -621,10 +623,10 @@ function VisualEditor() {
                       <p className="text-xl text-gray-400">{pageData.downloadSection.description}</p>
                       <div className="flex flex-wrap gap-4">
                         <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
-                          App Store
+                          {pageData.downloadSection.appStoreText || 'App Store'}
                         </button>
                         <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
-                          Google Play
+                          {pageData.downloadSection.playStoreText || 'Google Play'}
                         </button>
                       </div>
                     </div>

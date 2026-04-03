@@ -190,8 +190,11 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
         return (
           <>
             {renderField('heading', 'Main Heading', 'text', Type)}
+            {renderField('subheading', 'Sub Heading', 'text', Type)}
             {renderField('description', 'Description', 'textarea', Type)}
+            {renderField('appStoreText', 'App Store Button Text', 'text', Type)}
             {renderField('appStoreLink', 'App Store Link', 'url', LinkIcon)}
+            {renderField('playStoreText', 'Google Play Button Text', 'text', Type)}
             {renderField('playStoreLink', 'Play Store Link', 'url', LinkIcon)}
             {renderField('phoneMockup', 'Phone Mockup', 'image', ImageIcon)}
           </>
