@@ -7,6 +7,7 @@ import SectionEditor from './pages/admin/SectionEditor';
 import SiteSettings from './pages/admin/SiteSettings';
 import MediaLibrary from './pages/admin/MediaLibrary';
 import StreamersManager from './pages/admin/StreamersManager';
+import VisualEditor from './pages/admin/VisualEditor';
 import './App.css';
 
 function App() {
@@ -16,6 +17,9 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
+          
+          {/* Visual Editor - Direct route (no layout) */}
+          <Route path="/admin/visual" element={<VisualEditor />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
