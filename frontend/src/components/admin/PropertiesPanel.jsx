@@ -281,6 +281,25 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           </>
         );
 
+      case 'text-block':
+        return (
+          <>
+            {renderField('content', 'Text Content', 'textarea', Type)}
+            {renderField('alignment', 'Text Alignment', 'select', Layout, [
+              { value: 'left', label: 'Left' },
+              { value: 'center', label: 'Center' },
+              { value: 'right', label: 'Right' }
+            ])}
+            {renderField('fontSize', 'Font Size', 'select', Type, [
+              { value: 'sm', label: 'Small' },
+              { value: 'base', label: 'Base' },
+              { value: 'lg', label: 'Large' },
+              { value: 'xl', label: 'Extra Large' },
+              { value: '2xl', label: '2X Large' }
+            ])}
+          </>
+        );
+
       case 'footer-link':
         return (
           <>

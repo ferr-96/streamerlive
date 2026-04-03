@@ -29,9 +29,10 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://139.59.242.118:3001/api
 // Default section templates for adding/resetting
 const DEFAULT_SECTIONS = {
   header: { siteName: 'StreamerLive', logo: null },
-  hero: { title: 'Join Elite Streamers', subtitle: 'A premium gaming livestream platform', primaryButtonText: 'CTA Streamers', primaryButtonLink: '#', secondaryButtonText: 'Sign Up', secondaryButtonLink: '#', characterImage: null },
-  vipBanner: { title: 'VIP Rewards Banner', description: 'Get rewards and countless premium gaming livestream platform', buttonText: 'Get Started', buttonLink: '#', backgroundImage: null },
-  downloadSection: { heading: 'Download App', subheading: 'Stream Anywhere', description: 'Stream your app to discover premium gaming livestreams', appStoreText: 'App Store', appStoreLink: '#', playStoreText: 'Google Play', playStoreLink: '#', phoneMockup: null },
+  hero: { id: 'hero1', title: 'Join Elite Streamers', subtitle: 'A premium gaming livestream platform', primaryButtonText: 'CTA Streamers', primaryButtonLink: '#', secondaryButtonText: 'Sign Up', secondaryButtonLink: '#', characterImage: null, layout: 'left', size: 'full' },
+  vipBanner: { id: 'vip1', title: 'VIP Rewards Banner', description: 'Get rewards and countless premium gaming livestream platform', buttonText: 'Get Started', buttonLink: '#', backgroundImage: null, size: 'large' },
+  downloadSection: { id: 'dl1', heading: 'Download App', subheading: 'Stream Anywhere', description: 'Stream your app to discover premium gaming livestreams', appStoreText: 'App Store', appStoreLink: '#', playStoreText: 'Google Play', playStoreLink: '#', phoneMockup: null, layout: 'left' },
+  textBlock: { id: 'text1', content: 'Add your text content here. Click to edit and customize this section.', alignment: 'left', fontSize: 'base' },
   newCategory: { name: 'New Category', icon: 'Target', iconImage: '', gradient: 'from-purple-500 to-pink-500' },
   newStreamer: { name: 'New Streamer', viewers: '0K', image: 'https://i.pravatar.cc/300?img=1', isLive: true, profileUrl: '' },
   newFeature: { icon: 'Award', iconImage: '', title: 'New Feature', description: 'Feature description here', link: '' },
@@ -64,21 +65,36 @@ function VisualEditor() {
       siteName: 'StreamerLive',
       logo: null
     },
-    hero: {
-      title: 'Join Elite Streamers',
-      subtitle: 'A premium gaming livestream platform',
-      primaryButtonText: 'CTA Streamers',
-      primaryButtonLink: '#',
-      secondaryButtonText: 'Sign Up',
-      secondaryButtonLink: '#',
-      characterImage: null,
-      layout: 'left',
-      size: 'full'
-    },
+    // Section arrays for dynamic content
+    heroSections: [
+      {
+        id: 'hero1',
+        title: 'Join Elite Streamers',
+        subtitle: 'A premium gaming livestream platform',
+        primaryButtonText: 'CTA Streamers',
+        primaryButtonLink: '#',
+        secondaryButtonText: 'Sign Up',
+        secondaryButtonLink: '#',
+        characterImage: null,
+        layout: 'left',
+        size: 'full'
+      }
+    ],
     categoriesSection: {
       columns: '6',
       style: 'cards'
     },
+    vipBanners: [
+      {
+        id: 'vip1',
+        title: 'VIP Rewards Banner',
+        description: 'Get rewards and countless premium gaming livestream platform',
+        buttonText: 'Get Started',
+        buttonLink: '#',
+        backgroundImage: null,
+        size: 'large'
+      }
+    ],
     categories: [
       { id: 'cat1', name: 'Battle Royale', icon: 'Target', gradient: 'from-purple-500 to-pink-500' },
       { id: 'cat2', name: 'RPG', icon: 'Swords', gradient: 'from-pink-500 to-purple-600' },
@@ -87,14 +103,6 @@ function VisualEditor() {
       { id: 'cat5', name: 'Strategy', icon: 'Gamepad2', gradient: 'from-purple-500 to-pink-600' },
       { id: 'cat6', name: 'Arcade', icon: 'Play', gradient: 'from-pink-600 to-purple-400' },
     ],
-    vipBanner: {
-      title: 'VIP Rewards Banner',
-      description: 'Get rewards and countless premium gaming livestream platform',
-      buttonText: 'Get Started',
-      buttonLink: '#',
-      backgroundImage: null,
-      size: 'large'
-    },
     streamersSection: {
       columns: '4',
       cardSize: 'medium'
@@ -109,22 +117,26 @@ function VisualEditor() {
       columns: '3',
       style: 'cards'
     },
+    downloadSections: [
+      {
+        id: 'dl1',
+        heading: 'Download App',
+        subheading: 'Stream Anywhere',
+        description: 'Stream your app to discover premium gaming livestreams',
+        appStoreText: 'App Store',
+        appStoreLink: '#',
+        playStoreText: 'Google Play',
+        playStoreLink: '#',
+        phoneMockup: null,
+        layout: 'left'
+      }
+    ],
+    textBlocks: [],
     features: [
       { id: 'feat1', icon: 'Headphones', iconImage: '', title: '24/7 Support', description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.', link: '' },
       { id: 'feat2', icon: 'Lock', iconImage: '', title: 'Secure Platform', description: 'Your data is protected with enterprise-grade security and encryption protocols.', link: '' },
       { id: 'feat3', icon: 'Award', iconImage: '', title: 'Instant Rewards', description: 'Earn points and unlock exclusive benefits immediately as you stream and engage.', link: '' },
     ],
-    downloadSection: {
-      heading: 'Download App',
-      subheading: 'Stream Anywhere',
-      description: 'Stream your app to discover premium gaming livestreams',
-      appStoreText: 'App Store',
-      appStoreLink: '#',
-      playStoreText: 'Google Play',
-      playStoreLink: '#',
-      phoneMockup: null,
-      layout: 'left'
-    },
     footerLinks: [
       { id: 'link1', text: 'About', url: '#about' },
       { id: 'link2', text: 'Streamers', url: '#streamers' },
@@ -150,7 +162,26 @@ function VisualEditor() {
       // Try loading from localStorage first
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
-        setPageData(JSON.parse(cached));
+        let data = JSON.parse(cached);
+        
+        // Backwards compatibility: convert old single objects to arrays
+        if (data.hero && !data.heroSections) {
+          data.heroSections = [{ ...data.hero, id: data.hero.id || 'hero1' }];
+          delete data.hero;
+        }
+        if (data.vipBanner && !data.vipBanners) {
+          data.vipBanners = [{ ...data.vipBanner, id: data.vipBanner.id || 'vip1' }];
+          delete data.vipBanner;
+        }
+        if (data.downloadSection && !data.downloadSections) {
+          data.downloadSections = [{ ...data.downloadSection, id: data.downloadSection.id || 'dl1' }];
+          delete data.downloadSection;
+        }
+        if (!data.textBlocks) {
+          data.textBlocks = [];
+        }
+        
+        setPageData(data);
       }
 
       // Then try API
@@ -210,11 +241,13 @@ function VisualEditor() {
     if (type === 'header') {
       data = pageData.header;
     } else if (type === 'hero') {
-      data = pageData.hero;
+      data = pageData.heroSections?.find(h => h.id === id);
     } else if (type === 'vip-banner') {
-      data = pageData.vipBanner;
+      data = pageData.vipBanners?.find(v => v.id === id);
     } else if (type === 'download-section') {
-      data = pageData.downloadSection;
+      data = pageData.downloadSections?.find(d => d.id === id);
+    } else if (type === 'text-block') {
+      data = pageData.textBlocks?.find(t => t.id === id);
     } else if (type === 'categories-section') {
       data = pageData.categoriesSection;
     } else if (type === 'streamers-section') {
@@ -249,14 +282,17 @@ function VisualEditor() {
         console.log('✅ Updating header');
         updated.header = newData;
       } else if (type === 'hero') {
-        console.log('✅ Updating hero');
-        updated.hero = newData;
+        console.log('✅ Updating hero section');
+        updated.heroSections = prev.heroSections.map(h => h.id === id ? { ...h, ...newData } : h);
       } else if (type === 'vip-banner') {
         console.log('✅ Updating vip-banner');
-        updated.vipBanner = newData;
+        updated.vipBanners = prev.vipBanners.map(v => v.id === id ? { ...v, ...newData } : v);
       } else if (type === 'download-section') {
         console.log('✅ Updating download-section');
-        updated.downloadSection = newData;
+        updated.downloadSections = prev.downloadSections.map(d => d.id === id ? { ...d, ...newData } : d);
+      } else if (type === 'text-block') {
+        console.log('✅ Updating text-block');
+        updated.textBlocks = prev.textBlocks.map(t => t.id === id ? { ...t, ...newData } : t);
       } else if (type === 'categories-section') {
         console.log('✅ Updating categories-section');
         updated.categoriesSection = newData;
@@ -288,7 +324,15 @@ function VisualEditor() {
     setPageData(prev => {
       const updated = { ...prev };
 
-      if (selectedElement.type.startsWith('category')) {
+      if (selectedElement.type === 'hero') {
+        updated.heroSections = prev.heroSections.filter(h => h.id !== id);
+      } else if (selectedElement.type === 'vip-banner') {
+        updated.vipBanners = prev.vipBanners.filter(v => v.id !== id);
+      } else if (selectedElement.type === 'download-section') {
+        updated.downloadSections = prev.downloadSections.filter(d => d.id !== id);
+      } else if (selectedElement.type === 'text-block') {
+        updated.textBlocks = prev.textBlocks.filter(t => t.id !== id);
+      } else if (selectedElement.type.startsWith('category')) {
         updated.categories = prev.categories.filter(c => c.id !== id);
       } else if (selectedElement.type.startsWith('streamer')) {
         updated.streamers = prev.streamers.filter(s => s.id !== id);
@@ -310,6 +354,63 @@ function VisualEditor() {
       }));
       setShowAddMenu(false);
     }
+  };
+
+  // Add a new section (hero, vipBanner, downloadSection, textBlock)
+  const handleAddSection = (sectionType) => {
+    const templates = {
+      hero: { 
+        ...DEFAULT_SECTIONS.hero,
+        id: `hero${Date.now()}`,
+        title: 'New Hero Section',
+        subtitle: 'Your subtitle here'
+      },
+      vipBanner: { 
+        ...DEFAULT_SECTIONS.vipBanner,
+        id: `vip${Date.now()}`,
+        title: 'New VIP Banner',
+        description: 'VIP banner description'
+      },
+      download: { 
+        ...DEFAULT_SECTIONS.downloadSection,
+        id: `dl${Date.now()}`,
+        heading: 'New Download Section'
+      },
+      textBlock: { 
+        ...DEFAULT_SECTIONS.textBlock,
+        id: `text${Date.now()}`,
+        content: 'Add your text content here'
+      },
+    };
+
+    const newSection = templates[sectionType];
+    if (!newSection) return;
+
+    setPageData(prev => {
+      const updated = { ...prev };
+      
+      if (sectionType === 'hero') {
+        updated.heroSections = [...(prev.heroSections || []), newSection];
+      } else if (sectionType === 'vipBanner') {
+        updated.vipBanners = [...(prev.vipBanners || []), newSection];
+      } else if (sectionType === 'download') {
+        updated.downloadSections = [...(prev.downloadSections || []), newSection];
+      } else if (sectionType === 'textBlock') {
+        updated.textBlocks = [...(prev.textBlocks || []), newSection];
+      }
+      
+      return updated;
+    });
+
+    // Auto-select the new section
+    const typeMap = {
+      hero: 'hero',
+      vipBanner: 'vip-banner',
+      download: 'download-section',
+      textBlock: 'text-block'
+    };
+    setSelectedElement({ id: newSection.id, type: typeMap[sectionType], data: newSection });
+    setShowAddMenu(false);
   };
 
   // Add a new item to an array section
@@ -496,13 +597,13 @@ function VisualEditor() {
                 {showAddMenu && (
                   <div className="absolute top-full right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
                     <div className="p-2 border-b border-gray-700">
-                      <p className="text-xs text-gray-400 uppercase font-semibold px-2">Reset Section to Default</p>
+                      <p className="text-xs text-gray-400 uppercase font-semibold px-2">Add New Section</p>
                     </div>
                     <div className="p-1">
-                      <button onClick={() => handleResetSection('header')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">🏠 Header</button>
-                      <button onClick={() => handleResetSection('hero')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">⭐ Hero Section</button>
-                      <button onClick={() => handleResetSection('vipBanner')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">👑 VIP Banner</button>
-                      <button onClick={() => handleResetSection('downloadSection')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">📱 Download Section</button>
+                      <button onClick={() => handleAddSection('hero')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Hero Section</button>
+                      <button onClick={() => handleAddSection('vipBanner')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add VIP Banner</button>
+                      <button onClick={() => handleAddSection('download')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Download Section</button>
+                      <button onClick={() => handleAddSection('textBlock')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Text Block</button>
                     </div>
                     <div className="p-2 border-t border-gray-700">
                       <p className="text-xs text-gray-400 uppercase font-semibold px-2">Add New Item</p>
@@ -511,6 +612,12 @@ function VisualEditor() {
                       <button onClick={() => handleAddItem('categories')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Category</button>
                       <button onClick={() => handleAddItem('streamers')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Streamer</button>
                       <button onClick={() => handleAddItem('features')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">➕ Add Feature</button>
+                    </div>
+                    <div className="p-2 border-t border-gray-700">
+                      <p className="text-xs text-gray-400 uppercase font-semibold px-2">Reset to Default</p>
+                    </div>
+                    <div className="p-1">
+                      <button onClick={() => handleResetSection('header')} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">🔄 Header</button>
                     </div>
                   </div>
                 )}
@@ -567,51 +674,54 @@ function VisualEditor() {
               </header>
             </EditableElement>
 
-            {/* Hero Section */}
-            <EditableElement
-              id="hero"
-              type="hero"
-              isSelected={selectedElement?.type === 'hero'}
-              onClick={handleElementClick}
-              className="py-20"
-            >
-              <section className={`flex items-center ${
-                pageData.hero.size === 'full' ? 'min-h-screen' : 
-                pageData.hero.size === 'medium' ? 'min-h-[500px]' : 
-                'min-h-[300px]'
-              }`}>
-                <div className={`max-w-7xl mx-auto px-6 grid gap-12 items-center ${
-                  pageData.hero.layout === 'center' ? 'grid-cols-1 text-center' :
-                  pageData.hero.layout === 'right' ? 'md:grid-cols-2' : 
-                  'md:grid-cols-2'
-                } ${pageData.hero.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                  <div className="space-y-8">
-                    <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-                      {pageData.hero.title.split(' ').slice(0, 2).join(' ')}{' '}
-                      <span className="bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
-                        {pageData.hero.title.split(' ').slice(2).join(' ')}
-                      </span>
-                    </h1>
-                    <p className="text-xl text-gray-400">{pageData.hero.subtitle}</p>
-                    <div className={`flex flex-wrap gap-4 ${pageData.hero.layout === 'center' ? 'justify-center' : ''}`}>
-                      <button className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold">
-                        {pageData.hero.primaryButtonText}
-                      </button>
-                      <button className="px-8 py-4 border-2 border-[#a855f7] text-[#a855f7] rounded-lg font-semibold">
-                        {pageData.hero.secondaryButtonText}
-                      </button>
-                    </div>
-                  </div>
-                  {pageData.hero.layout !== 'center' && (
-                    <div className="relative">
-                      <div className="w-full h-[500px] bg-gradient-to-br from-[#a855f7]/20 via-[#ec4899]/20 to-purple-900/20 rounded-3xl border border-[#a855f7]/30 backdrop-blur-sm flex items-center justify-center">
-                        <Users className="w-32 h-32 text-[#a855f7]/40" />
+            {/* Hero Sections */}
+            {pageData.heroSections?.map((hero) => (
+              <EditableElement
+                key={hero.id}
+                id={hero.id}
+                type="hero"
+                isSelected={selectedElement?.id === hero.id}
+                onClick={handleElementClick}
+                className="py-20"
+              >
+                <section className={`flex items-center ${
+                  hero.size === 'full' ? 'min-h-screen' : 
+                  hero.size === 'medium' ? 'min-h-[500px]' : 
+                  'min-h-[300px]'
+                }`}>
+                  <div className={`max-w-7xl mx-auto px-6 grid gap-12 items-center ${
+                    hero.layout === 'center' ? 'grid-cols-1 text-center' :
+                    hero.layout === 'right' ? 'md:grid-cols-2' : 
+                    'md:grid-cols-2'
+                  } ${hero.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
+                    <div className="space-y-8">
+                      <h1 className="text-6xl md:text-7xl font-bold leading-tight">
+                        {hero.title.split(' ').slice(0, 2).join(' ')}{' '}
+                        <span className="bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
+                          {hero.title.split(' ').slice(2).join(' ')}
+                        </span>
+                      </h1>
+                      <p className="text-xl text-gray-400">{hero.subtitle}</p>
+                      <div className={`flex flex-wrap gap-4 ${hero.layout === 'center' ? 'justify-center' : ''}`}>
+                        <button className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-lg font-semibold">
+                          {hero.primaryButtonText}
+                        </button>
+                        <button className="px-8 py-4 border-2 border-[#a855f7] text-[#a855f7] rounded-lg font-semibold">
+                          {hero.secondaryButtonText}
+                        </button>
                       </div>
                     </div>
-                  )}
-                </div>
-              </section>
-            </EditableElement>
+                    {hero.layout !== 'center' && (
+                      <div className="relative">
+                        <div className="w-full h-[500px] bg-gradient-to-br from-[#a855f7]/20 via-[#ec4899]/20 to-purple-900/20 rounded-3xl border border-[#a855f7]/30 backdrop-blur-sm flex items-center justify-center">
+                          <Users className="w-32 h-32 text-[#a855f7]/40" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </EditableElement>
+            ))}
 
             {/* Categories */}
             <section className="py-20 bg-[#0f0f23]">
@@ -676,59 +786,62 @@ function VisualEditor() {
               </div>
             </section>
 
-            {/* VIP Banner */}
-            <EditableElement
-              id="vip-banner"
-              type="vip-banner"
-              isSelected={selectedElement?.type === 'vip-banner'}
-              onClick={handleElementClick}
-              className="py-20"
-            >
-              <section className="max-w-7xl mx-auto px-6">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#fbbf24] via-[#a855f7] to-[#ec4899] p-1">
-                  <div className={`bg-[#0a0a1a] rounded-[22px] ${
-                    pageData.vipBanner.size === 'large' ? 'p-12' :
-                    pageData.vipBanner.size === 'medium' ? 'p-8' :
-                    'p-6'
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-start space-x-6">
-                        <div className={`bg-gradient-to-br from-[#fbbf24] to-orange-500 rounded-full flex items-center justify-center ${
-                          pageData.vipBanner.size === 'large' ? 'w-20 h-20' :
-                          pageData.vipBanner.size === 'medium' ? 'w-16 h-16' :
-                          'w-12 h-12'
-                        }`}>
-                          <Crown className={`text-white ${
-                            pageData.vipBanner.size === 'large' ? 'w-12 h-12' :
-                            pageData.vipBanner.size === 'medium' ? 'w-8 h-8' :
-                            'w-6 h-6'
-                          }`} />
-                        </div>
-                        <div>
-                          <h3 className={`font-bold mb-3 ${
-                            pageData.vipBanner.size === 'large' ? 'text-3xl' :
-                            pageData.vipBanner.size === 'medium' ? 'text-2xl' :
-                            'text-xl'
-                          }`}>{pageData.vipBanner.title}</h3>
-                          <p className={`text-gray-300 mb-6 ${
-                            pageData.vipBanner.size === 'large' ? 'text-lg' :
-                            pageData.vipBanner.size === 'medium' ? 'text-base' :
-                            'text-sm'
-                          }`}>{pageData.vipBanner.description}</p>
-                          <button className={`bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold ${
-                            pageData.vipBanner.size === 'large' ? 'px-8 py-3' :
-                            pageData.vipBanner.size === 'medium' ? 'px-6 py-2.5' :
-                            'px-4 py-2 text-sm'
+            {/* VIP Banners */}
+            {pageData.vipBanners?.map((vipBanner) => (
+              <EditableElement
+                key={vipBanner.id}
+                id={vipBanner.id}
+                type="vip-banner"
+                isSelected={selectedElement?.id === vipBanner.id}
+                onClick={handleElementClick}
+                className="py-20"
+              >
+                <section className="max-w-7xl mx-auto px-6">
+                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#fbbf24] via-[#a855f7] to-[#ec4899] p-1">
+                    <div className={`bg-[#0a0a1a] rounded-[22px] ${
+                      vipBanner.size === 'large' ? 'p-12' :
+                      vipBanner.size === 'medium' ? 'p-8' :
+                      'p-6'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-start space-x-6">
+                          <div className={`bg-gradient-to-br from-[#fbbf24] to-orange-500 rounded-full flex items-center justify-center ${
+                            vipBanner.size === 'large' ? 'w-20 h-20' :
+                            vipBanner.size === 'medium' ? 'w-16 h-16' :
+                            'w-12 h-12'
                           }`}>
-                            {pageData.vipBanner.buttonText}
-                          </button>
+                            <Crown className={`text-white ${
+                              vipBanner.size === 'large' ? 'w-12 h-12' :
+                              vipBanner.size === 'medium' ? 'w-8 h-8' :
+                              'w-6 h-6'
+                            }`} />
+                          </div>
+                          <div>
+                            <h3 className={`font-bold mb-3 ${
+                              vipBanner.size === 'large' ? 'text-3xl' :
+                              vipBanner.size === 'medium' ? 'text-2xl' :
+                              'text-xl'
+                            }`}>{vipBanner.title}</h3>
+                            <p className={`text-gray-300 mb-6 ${
+                              vipBanner.size === 'large' ? 'text-lg' :
+                              vipBanner.size === 'medium' ? 'text-base' :
+                              'text-sm'
+                            }`}>{vipBanner.description}</p>
+                            <button className={`bg-gradient-to-r from-orange-500 to-[#fbbf24] text-white rounded-lg font-semibold ${
+                              vipBanner.size === 'large' ? 'px-8 py-3' :
+                              vipBanner.size === 'medium' ? 'px-6 py-2.5' :
+                              'px-4 py-2 text-sm'
+                            }`}>
+                              {vipBanner.buttonText}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </section>
-            </EditableElement>
+                </section>
+              </EditableElement>
+            ))}
 
             {/* Streamers */}
             <section className="py-20 bg-[#0f0f23]">
@@ -864,53 +977,77 @@ function VisualEditor() {
               </div>
             </section>
 
-            {/* Download Section */}
-            <EditableElement
-              id="download-section"
-              type="download-section"
-              isSelected={selectedElement?.type === 'download-section'}
-              onClick={handleElementClick}
-            >
-              <section className="py-20 bg-[#0f0f23]">
-                <div className="max-w-7xl mx-auto px-6">
-                  <div className={`grid gap-16 items-center ${
-                    pageData.downloadSection.layout === 'center' ? 'grid-cols-1 text-center' :
-                    'md:grid-cols-2'
-                  } ${pageData.downloadSection.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                    {pageData.downloadSection.layout !== 'center' && (
-                      <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center overflow-hidden">
-                        {pageData.downloadSection.phoneMockup ? (
-                          <img 
-                            src={pageData.downloadSection.phoneMockup} 
-                            alt="Phone mockup" 
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
-                        )}
-                      </div>
-                    )}
-                    <div className="space-y-8">
-                      <h2 className="text-5xl md:text-6xl font-bold leading-tight">
-                        {pageData.downloadSection.heading}<br />
-                        <span className="bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
-                          {pageData.downloadSection.subheading}
-                        </span>
-                      </h2>
-                      <p className="text-xl text-gray-400">{pageData.downloadSection.description}</p>
-                      <div className={`flex flex-wrap gap-4 ${pageData.downloadSection.layout === 'center' ? 'justify-center' : ''}`}>
-                        <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
-                          {pageData.downloadSection.appStoreText || 'App Store'}
-                        </button>
-                        <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
-                          {pageData.downloadSection.playStoreText || 'Google Play'}
-                        </button>
+            {/* Download Sections */}
+            {pageData.downloadSections?.map((downloadSection) => (
+              <EditableElement
+                key={downloadSection.id}
+                id={downloadSection.id}
+                type="download-section"
+                isSelected={selectedElement?.id === downloadSection.id}
+                onClick={handleElementClick}
+              >
+                <section className="py-20 bg-[#0f0f23]">
+                  <div className="max-w-7xl mx-auto px-6">
+                    <div className={`grid gap-16 items-center ${
+                      downloadSection.layout === 'center' ? 'grid-cols-1 text-center' :
+                      'md:grid-cols-2'
+                    } ${downloadSection.layout === 'right' ? 'md:[&>*:first-child]:order-2' : ''}`}>
+                      {downloadSection.layout !== 'center' && (
+                        <div className="w-full max-w-sm mx-auto h-[600px] bg-gradient-to-br from-[#a855f7]/30 via-[#ec4899]/30 to-purple-900/20 rounded-[3rem] border-8 border-gray-800 flex items-center justify-center overflow-hidden">
+                          {downloadSection.phoneMockup ? (
+                            <img 
+                              src={downloadSection.phoneMockup} 
+                              alt="Phone mockup" 
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Smartphone className="w-24 h-24 text-[#a855f7]/50" />
+                          )}
+                        </div>
+                      )}
+                      <div className="space-y-8">
+                        <h2 className="text-5xl md:text-6xl font-bold leading-tight">
+                          {downloadSection.heading}<br />
+                          <span className="bg-gradient-to-r from-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
+                            {downloadSection.subheading}
+                          </span>
+                        </h2>
+                        <p className="text-xl text-gray-400">{downloadSection.description}</p>
+                        <div className={`flex flex-wrap gap-4 ${downloadSection.layout === 'center' ? 'justify-center' : ''}`}>
+                          <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
+                            {downloadSection.appStoreText || 'App Store'}
+                          </button>
+                          <button className="px-6 py-4 bg-[#0a0a1a] border border-gray-700 rounded-xl hover:border-[#a855f7] transition-all">
+                            {downloadSection.playStoreText || 'Google Play'}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </section>
-            </EditableElement>
+                </section>
+              </EditableElement>
+            ))}
+
+            {/* Text Blocks */}
+            {pageData.textBlocks?.map((textBlock) => (
+              <EditableElement
+                key={textBlock.id}
+                id={textBlock.id}
+                type="text-block"
+                isSelected={selectedElement?.id === textBlock.id}
+                onClick={handleElementClick}
+              >
+                <section className="py-20">
+                  <div className="max-w-7xl mx-auto px-6">
+                    <div className={`text-${textBlock.alignment || 'left'} text-${textBlock.fontSize || 'base'}`}>
+                      <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                        {textBlock.content}
+                      </p>
+                    </div>
+                  </div>
+                </section>
+              </EditableElement>
+            ))}
 
             {/* Footer */}
             <footer className="bg-[#0a0a1a] border-t border-gray-800 py-16">
