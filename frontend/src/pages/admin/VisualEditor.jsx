@@ -55,10 +55,10 @@ function VisualEditor() {
       backgroundImage: null
     },
     streamers: [
-      { id: 'str1', name: 'Atherton', viewers: '24.5K', image: 'https://i.pravatar.cc/300?img=12', isLive: true },
-      { id: 'str2', name: 'Nana', viewers: '18.2K', image: 'https://i.pravatar.cc/300?img=45', isLive: true },
-      { id: 'str3', name: 'Geertan', viewers: '32.1K', image: 'https://i.pravatar.cc/300?img=33', isLive: true },
-      { id: 'str4', name: 'Monika', viewers: '15.8K', image: 'https://i.pravatar.cc/300?img=47', isLive: true },
+      { id: 'str1', name: 'Atherton', viewers: '24.5K', image: 'https://i.pravatar.cc/300?img=12', isLive: true, profileUrl: '' },
+      { id: 'str2', name: 'Nana', viewers: '18.2K', image: 'https://i.pravatar.cc/300?img=45', isLive: true, profileUrl: '' },
+      { id: 'str3', name: 'Geertan', viewers: '32.1K', image: 'https://i.pravatar.cc/300?img=33', isLive: true, profileUrl: '' },
+      { id: 'str4', name: 'Monika', viewers: '15.8K', image: 'https://i.pravatar.cc/300?img=47', isLive: true, profileUrl: '' },
     ],
     features: [
       { id: 'feat1', icon: 'Headphones', title: '24/7 Support', description: 'Get help anytime, anywhere with our dedicated support team ready to assist you.' },
