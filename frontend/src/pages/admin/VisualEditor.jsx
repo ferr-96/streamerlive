@@ -28,7 +28,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://139.59.242.118:3001/api
 
 // Default section templates for adding/resetting
 const DEFAULT_SECTIONS = {
-  header: { siteName: 'StreamerLive', logo: null },
+  header: { siteName: 'StreamerLive', logo: null, showLogin: true, loginText: 'Login', loginLink: '#', showSignup: true, signupText: 'Sign Up', signupLink: '#' },
   hero: { id: 'hero1', title: 'Join Elite Streamers', subtitle: 'A premium gaming livestream platform', primaryButtonText: 'CTA Streamers', primaryButtonLink: '#', secondaryButtonText: 'Sign Up', secondaryButtonLink: '#', characterImage: null, layout: 'left', size: 'full' },
   vipBanner: { id: 'vip1', title: 'VIP Rewards Banner', description: 'Get rewards and countless premium gaming livestream platform', buttonText: 'Get Started', buttonLink: '#', backgroundImage: null, size: 'large' },
   downloadSection: { id: 'dl1', heading: 'Download App', subheading: 'Stream Anywhere', description: 'Stream your app to discover premium gaming livestreams', appStoreText: 'App Store', appStoreLink: '#', playStoreText: 'Google Play', playStoreLink: '#', phoneMockup: null, layout: 'left' },
@@ -664,10 +664,16 @@ function VisualEditor() {
                       </span>
                     </div>
                     <div className="flex items-center space-x-4">
-                      <button className="text-gray-300">Login</button>
-                      <button className="px-6 py-2 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-full font-medium">
-                        Sign Up
-                      </button>
+                      {pageData.header.showLogin !== false && (
+                        <a href={pageData.header.loginLink || '#'} className="text-gray-300 hover:text-white transition-colors">
+                          {pageData.header.loginText || 'Login'}
+                        </a>
+                      )}
+                      {pageData.header.showSignup !== false && (
+                        <a href={pageData.header.signupLink || '#'} className="px-6 py-2 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-full font-medium hover:opacity-90 transition-opacity">
+                          {pageData.header.signupText || 'Sign Up'}
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

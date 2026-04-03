@@ -172,12 +172,16 @@ function LandingPage() {
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
-              <button className="text-gray-300 hover:text-white transition-colors">
-                Login
-              </button>
-              <button className="px-6 py-2 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-full hover:opacity-90 transition-all font-medium">
-                Sign Up
-              </button>
+              {header?.showLogin !== false && (
+                <a href={header?.loginLink || '#'} className="text-gray-300 hover:text-white transition-colors">
+                  {header?.loginText || 'Login'}
+                </a>
+              )}
+              {header?.showSignup !== false && (
+                <a href={header?.signupLink || '#'} className="px-6 py-2 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-full hover:opacity-90 transition-all font-medium">
+                  {header?.signupText || 'Sign Up'}
+                </a>
+              )}
             </div>
           </div>
         </div>

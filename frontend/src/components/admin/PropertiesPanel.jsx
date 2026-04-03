@@ -63,6 +63,16 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
+        ) : type === 'checkbox' ? (
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={formData[field] !== false}
+              onChange={(e) => handleChange(field, e.target.checked)}
+              className="w-5 h-5 rounded border-gray-600 bg-gray-800 text-cyan-500 focus:ring-cyan-500"
+            />
+            <span className="text-gray-300">{formData[field] !== false ? 'Visible' : 'Hidden'}</span>
+          </label>
         ) : type === 'textarea' ? (
           <textarea
             value={formData[field] || ''}
@@ -124,6 +134,18 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
           <>
             {renderField('siteName', 'Site Name', 'text', Type)}
             {renderField('logo', 'Logo Image', 'image', ImageIcon)}
+            <div className="border-t border-gray-700 pt-4 mt-4">
+              <p className="text-xs text-gray-400 uppercase font-semibold mb-3">Login Button</p>
+              {renderField('showLogin', 'Show Login Button', 'checkbox', Eye)}
+              {renderField('loginText', 'Login Button Text', 'text', Type)}
+              {renderField('loginLink', 'Login Link URL', 'url', LinkIcon)}
+            </div>
+            <div className="border-t border-gray-700 pt-4 mt-4">
+              <p className="text-xs text-gray-400 uppercase font-semibold mb-3">Sign Up Button</p>
+              {renderField('showSignup', 'Show Sign Up Button', 'checkbox', Eye)}
+              {renderField('signupText', 'Sign Up Button Text', 'text', Type)}
+              {renderField('signupLink', 'Sign Up Link URL', 'url', LinkIcon)}
+            </div>
           </>
         );
 
