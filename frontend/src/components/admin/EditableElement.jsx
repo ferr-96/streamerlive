@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { Edit2, GripVertical } from 'lucide-react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 /**
  * EditableElement - Wrapper that makes any element editable in the visual editor
@@ -13,14 +15,34 @@ function EditableElement({
   className = '',
   isDraggable = false 
 }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ 
+    id: id,
+    disabled: !isDraggable 
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
     <motion.div
+      ref={setNodeRef}
+      style={style}
       className={`relative group ${className}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(id, type);
       }}
-      whileHover={{ scale: 1.002 }}
+      whileHover={!isDragging ? { scale: 1.002 } : {}}
       transition={{ duration: 0.2 }}
     >
       {/* Selection Border */}
@@ -39,7 +61,11 @@ function EditableElement({
       {/* Edit Badge */}
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-40 flex items-center gap-2">
         {isDraggable && (
-          <div className="bg-purple-600 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1 shadow-lg">
+          <div 
+            {...attributes}
+            {...listeners}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1 shadow-lg cursor-grab active:cursor-grabbing"
+          >
             <GripVertical className="w-3 h-3" />
             Drag
           </div>

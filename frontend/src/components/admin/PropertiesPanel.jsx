@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, Upload, Trash2, ChevronUp, ChevronDown, 
+  X, Upload, Trash2,
   Save, Image as ImageIcon, Type, Link as LinkIcon,
   Palette, Layout, Eye, Check
 } from 'lucide-react';
@@ -336,24 +336,6 @@ function PropertiesPanel({ selectedElement, onUpdate, onDelete, onClose }) {
 
         {/* Actions Footer */}
         <div className="border-t border-gray-800 p-6 space-y-3 bg-gray-900">
-          {/* Position Controls */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => onUpdate(selectedElement.id, { ...formData, moveUp: true }, selectedElement.type)}
-              className="flex-1 bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-all"
-            >
-              <ChevronUp className="w-4 h-4" />
-              Move Up
-            </button>
-            <button
-              onClick={() => onUpdate(selectedElement.id, { ...formData, moveDown: true }, selectedElement.type)}
-              className="flex-1 bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-all"
-            >
-              <ChevronDown className="w-4 h-4" />
-              Move Down
-            </button>
-          </div>
-
           {/* Save Button */}
           <button
             type="button"

@@ -5,6 +5,20 @@ import {
   Play, Crown, Target, Swords, Trophy, Dices, Gamepad2,
   Users, Headphones, Lock, Award, Smartphone
 } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import EditableElement from '../../components/admin/EditableElement';
 import PropertiesPanel from '../../components/admin/PropertiesPanel';
 import api from '../../services/api';
@@ -35,6 +49,14 @@ function VisualEditor() {
   const [saveStatus, setSaveStatus] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Page Content State with fallback data
   const [pageData, setPageData] = useState({
@@ -343,6 +365,60 @@ function VisualEditor() {
     setSelectedElement({ id: newStreamer.id, type: 'streamer-card', data: newStreamer });
   };
 
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Determine which array we're reordering
+    const activeId = active.id;
+    const overId = over.id;
+
+    // Check categories
+    const categoryIds = pageData.categories.map(c => c.id);
+    if (categoryIds.includes(activeId) && categoryIds.includes(overId)) {
+      setPageData(prev => {
+        const oldIndex = prev.categories.findIndex(c => c.id === activeId);
+        const newIndex = prev.categories.findIndex(c => c.id === overId);
+        return {
+          ...prev,
+          categories: arrayMove(prev.categories, oldIndex, newIndex)
+        };
+      });
+      return;
+    }
+
+    // Check streamers
+    const streamerIds = pageData.streamers.map(s => s.id);
+    if (streamerIds.includes(activeId) && streamerIds.includes(overId)) {
+      setPageData(prev => {
+        const oldIndex = prev.streamers.findIndex(s => s.id === activeId);
+        const newIndex = prev.streamers.findIndex(s => s.id === overId);
+        return {
+          ...prev,
+          streamers: arrayMove(prev.streamers, oldIndex, newIndex)
+        };
+      });
+      return;
+    }
+
+    // Check features
+    const featureIds = pageData.features.map(f => f.id);
+    if (featureIds.includes(activeId) && featureIds.includes(overId)) {
+      setPageData(prev => {
+        const oldIndex = prev.features.findIndex(f => f.id === activeId);
+        const newIndex = prev.features.findIndex(f => f.id === overId);
+        return {
+          ...prev,
+          features: arrayMove(prev.features, oldIndex, newIndex)
+        };
+      });
+      return;
+    }
+  };
+
   const getIcon = (iconName) => {
     const icons = {
       Target, Swords, Trophy, Dices, Gamepad2, Play,
@@ -352,6 +428,11 @@ function VisualEditor() {
   };
 
   return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
     <div className="min-h-screen bg-gray-900">
       {/* Top Toolbar */}
       <div className="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-xl">
@@ -548,6 +629,10 @@ function VisualEditor() {
                     ⚙️ Section Layout
                   </button>
                 </div>
+                <SortableContext
+                  items={pageData.categories.map(c => c.id)}
+                  strategy={verticalListSortingStrategy}
+                >
                 <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${pageData.categoriesSection?.columns || '6'} gap-6`}>
                   {pageData.categories.map((category, index) => {
                     const IconComponent = getIcon(category.icon);
@@ -558,6 +643,7 @@ function VisualEditor() {
                         type="category"
                         isSelected={selectedElement?.id === category.id}
                         onClick={handleElementClick}
+                        isDraggable={true}
                       >
                         <div className="bg-[#0a0a1a] border border-gray-800 rounded-xl p-6 hover:border-[#a855f7] transition-all cursor-pointer">
                           <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center overflow-hidden`}>
@@ -575,6 +661,7 @@ function VisualEditor() {
                     );
                   })}
                 </div>
+                </SortableContext>
                 
                 {/* Add Category Button */}
                 <div className="mt-8 flex justify-center">
@@ -659,6 +746,10 @@ function VisualEditor() {
                     ⚙️ Section Layout
                   </button>
                 </div>
+                <SortableContext
+                  items={pageData.streamers.map(s => s.id)}
+                  strategy={verticalListSortingStrategy}
+                >
                 <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${pageData.streamersSection?.columns || '4'} gap-6 mt-16`}>
                   {pageData.streamers.map((streamer) => {
                     const cardContent = (
@@ -712,6 +803,7 @@ function VisualEditor() {
                     );
                   })}
                 </div>
+                </SortableContext>
                 
                 {/* Add Streamer Button */}
                 <div className="mt-8 flex justify-center">
@@ -741,6 +833,10 @@ function VisualEditor() {
                     ⚙️ Section Layout
                   </button>
                 </div>
+                <SortableContext
+                  items={pageData.features.map(f => f.id)}
+                  strategy={verticalListSortingStrategy}
+                >
                 <div className={`grid grid-cols-1 md:grid-cols-${pageData.featuresSection?.columns || '3'} gap-8`}>
                   {pageData.features.map((feature) => {
                     const IconComponent = getIcon(feature.icon);
@@ -751,6 +847,7 @@ function VisualEditor() {
                         type="feature"
                         isSelected={selectedElement?.id === feature.id}
                         onClick={handleElementClick}
+                        isDraggable={true}
                       >
                         <div className="bg-[#0f0f23] border border-gray-800 rounded-xl p-8 hover:border-[#a855f7] transition-all">
                           <div className="w-16 h-16 bg-gradient-to-br from-[#a855f7] to-[#ec4899] rounded-xl flex items-center justify-center mb-6">
@@ -763,6 +860,7 @@ function VisualEditor() {
                     );
                   })}
                 </div>
+                </SortableContext>
               </div>
             </section>
 
@@ -834,6 +932,7 @@ function VisualEditor() {
         />
       )}
     </div>
+    </DndContext>
   );
 }
 
